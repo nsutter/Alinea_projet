@@ -98,6 +98,23 @@ pmatrice multiplication(pmatrice m1, pmatrice m2)
   }
 }
 
+pmatrice multiplication_scal(const pmatrice M, float valeur)
+{
+  pmatrice m = nouvelleMatriceMatrix(M->hauteur,M->largeur);
+
+  int i, j;
+
+  for(i = 0; i < M->hauteur; i++)
+  {
+    for(j = 0; j < M->largeur; j++)
+    {
+      setElt(m, i, j, v * getElt(M, i, j));
+    }
+  }
+
+  return m;
+}
+
 int main(int argc, char *argv[])
 {
 
