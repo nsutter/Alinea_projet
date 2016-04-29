@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
-
 float getElt(pmatrice m, int i, int j)
 {
   return m->tab[i][j];
@@ -11,6 +9,26 @@ float getElt(pmatrice m, int i, int j)
 void setElt(pmatrice m, int i, int j, float valeur)
 {
   m->tab[i][j] = valeur;
+}
+
+void identite(pmatrice m)
+{
+  int i, j;
+
+  for(i = 0; i < m->hauteur; i++)
+  {
+    for(j = 0; j < m->largeur; j++)
+    {
+      if(i == j)
+      {
+        setElt(m, i, j, 1);
+      }
+      else
+      {
+        setElt(m, i, j, 0);
+      }
+    }
+  }
 }
 
 pmatrice addition(pmatrice m1, pmatrice m2)
@@ -100,7 +118,7 @@ pmatrice multiplication(pmatrice m1, pmatrice m2)
 
 pmatrice multiplication_scal(const pmatrice M, float valeur)
 {
-  pmatrice m = nouvelleMatriceMatrix(M->hauteur,M->largeur);
+  pmatrice m = nouvelleMatrice(M->hauteur,M->largeur);
 
   int i, j;
 
