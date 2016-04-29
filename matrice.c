@@ -35,7 +35,7 @@ pmatrice addition(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // addition possible
   {
-    pmatrice m = nouvelleMatrice(m1->largeur,m1->hauteur);
+    pmatrice m = nouvelleMatrice(m1->largeur, m1->hauteur);
 
     int i, j;
 
@@ -59,7 +59,7 @@ pmatrice soustraction(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // soustraction possible
   {
-    pmatrice m = nouvelleMatrice(m1->largeur,m1->hauteur);
+    pmatrice m = nouvelleMatrice(m1->largeur, m1->hauteur);
 
     int i, j;
 
@@ -96,7 +96,7 @@ pmatrice multiplication(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->hauteur)
   {
-    pmatrice m = nouvelleMatrice(m1->hauteur,m2->largeur);
+    pmatrice m = nouvelleMatrice(m1->hauteur, m2->largeur);
 
     int i, j;
 
@@ -116,9 +116,9 @@ pmatrice multiplication(pmatrice m1, pmatrice m2)
   }
 }
 
-pmatrice multiplication_scal(const pmatrice M, float valeur)
+pmatrice multiplication_scal(pmatrice M, float valeur)
 {
-  pmatrice m = nouvelleMatrice(M->hauteur,M->largeur);
+  pmatrice m = nouvelleMatrice(M->hauteur, M->largeur);
 
   int i, j;
 
@@ -131,6 +131,21 @@ pmatrice multiplication_scal(const pmatrice M, float valeur)
   }
 
   return m;
+}
+
+pmatrice transposition(pmatrice M)
+{
+  pmatrice m = nouvelleMatrice(M->largeur, M->hauteur);
+
+  int i, j;
+
+  for(i = 0; i < M->hauteur; i++)
+  {
+    for(j = 0; j < M->largeur; j++)
+    {
+      setElt(m, j, i, getElt(M, i, j)));
+    }
+  }
 }
 
 int main(int argc, char *argv[])
