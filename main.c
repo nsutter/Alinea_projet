@@ -136,24 +136,36 @@ pmatrice matrix(char * cmd, contexte * ct)
 	return mat;
 }
 
-pmatrice mult(char * cmd, contexte * ct)
+pmatrice fonction(char * cmd, contexte * ct, int fct)
 {
-	shift(cmd, 0);shift(cmd, 0);shift(cmd, 0);shift(cmd, 0);
+	while(cmd[0] != '(') shift(cmd, 0);
 	int i;
 	for(i=0; i<(int)strlen(cmd); i++)
 	{
-		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ') shift(cmd, i);
+		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ' || cmd[i] == '\n') {shift(cmd, i); i--; }
 	}
 	matrice * m1; matrice * m2;
 	char ** tab;
 	tab= separe(cmd, ",");
-	if(strncmp(tab[0], "matrix", 6) == 0) m1=matrix(tab[0], ct);
-	else m1= recherche_mat(tab[0], ct);
-	if(strncmp(tab[1], "matrix", 6) == 0) m2=matrix(tab[1], ct);
-	else m2= recherche_mat(tab[1], ct);
-	if(m1 != NULL && m2 != NULL) return multiplication(m1, m2);
+	if(strncmp(tab[0], "matrix", 6) == 0)
+		m1=matrix(tab[0], ct);
 	else
-		printf("					erreur paramètre");
+		m1= recherche_mat(tab[0], ct);
+
+	if(strncmp(tab[1], "matrix", 6) == 0)
+		m2=matrix(tab[1], ct);
+	else
+		m2= recherche_mat(tab[1], ct);
+
+	if(m1 != NULL && m2 != NULL)
+	{
+		if(fct == 1)
+			return multiplication(m1, m2);
+		else if(fct == 2)
+			return addition(m1, m2);
+	}
+	else
+		printf("					erreur paramètre\n");
 	return NULL;
 }
 
@@ -190,7 +202,6 @@ int main(int argc, char **argv)
 				 printf("Ligne : %s\n", line);
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
-				 int flag =0;
 				 char ** tab= separe(line, ":");
 
 				 int lg; int i;
@@ -198,21 +209,24 @@ int main(int argc, char **argv)
 				 if(lg>1)
 				 {
 					 while(tab[1][0] == ' ')for(i=0; i< (int) strlen(tab[1]); i++) tab[1][i]=tab[1][i+1]; // suppression du premier espace
+					 tab[1][strlen(tab[1])]= '\0';
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression espace
 					 if(tab[1][0] < '0' || tab[1][0] > '9')
 					 {
 						 matrice * ptr_mat_tmp;
+						 int fct=0;
 						 if(strncmp(tab[1], "matrix", 6) == 0)
 						 {
 							 ptr_mat_tmp= matrix(tab[1], ct);
-							 flag = 1;
+							 fct = -1;
 						 }
 						 else if(strncmp(tab[1], "mult(", 5) == 0)
-						 {
-							 ptr_mat_tmp= mult(tab[1], ct);
-							 flag = 1;
-						 }
-						 if(flag == 1 && ptr_mat_tmp != NULL)
+							 fct = 1;
+						 else if(strncmp(tab[1], "addition(", 9) == 0)
+						 	 fct = 2;
+						 if(fct > 0)
+							 ptr_mat_tmp= fonction(tab[1], ct, fct);
+						 if(fct != 0 && ptr_mat_tmp != NULL)
 						 {
 							 afficheMatrice(ptr_mat_tmp);
 							 mat m= malloc(sizeof(mat));
@@ -223,9 +237,7 @@ int main(int argc, char **argv)
 							 m->pointeur= ptr_mat_tmp;
 							 ct->tab_mat[ct->longueurm-1]= m;
 						 }
-						 else if(flag == 1)
-						 	printf("					erreur\n");
-						 else
+						 else if(fct == 0)
 						 	printf("					cmd not found\n");
 					 }
 					 else
@@ -242,6 +254,7 @@ int main(int argc, char **argv)
 				 }
 				 else
 				 {
+					 int fct =0;
 					 tab[0][strlen(tab[0])-1]='\0'; // suppression du \n
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression des espaces
 					 if(strncmp(tab[0], "matrix(", 7) == 0)
@@ -256,16 +269,9 @@ int main(int argc, char **argv)
 							printf("					erreur");
 					 }
 					 else if(strncmp(tab[0], "mult(", 5) == 0)
-					 {
-						 matrice * m= mult(tab[0], ct);
-						 if(m!=NULL)
-						 {
-							 afficheMatrice(m);
-							 // free la matrice
-						 }
-						 else
-						 	printf("					erreur: multiplication impossible");
-					 }
+					 	 fct = 1;
+					 else if(strncmp(tab[0], "addition(", 9) == 0)
+						 fct = 2;
 					 else
 					 {
 						 float * tmp= malloc(sizeof(float));
@@ -273,6 +279,15 @@ int main(int argc, char **argv)
 						 else if(recherche_mat(tab[0], ct) != NULL) afficheMatrice(recherche_mat(tab[0], ct));
 						 else printf("					cmd not found\n");
 						 free(tmp);
+					 }
+					 if(fct > 0)
+					 {
+						 matrice * m= fonction(tab[0], ct, fct);
+						 if(m!=NULL)
+						 {
+							 afficheMatrice(m);
+							 // free la matrice
+						 }
 					 }
 				 }
 				 free(tab);
