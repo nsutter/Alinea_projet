@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 				 if(lg>1)
 				 {
 					 while(tab[1][0] == ' ')for(i=0; i< (int) strlen(tab[1]); i++) tab[1][i]=tab[1][i+1]; // suppression du premier espace
-					 while(tab[0][strlen(tab[0]-1)] == ' ') tab[0][strlen(tab[0]-1)]= '\0';
+					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression espace
 					 if(strncmp(tab[1], "matrix", 6) == 0)
 					 {
 						 mat m= malloc(sizeof(mat));
@@ -181,6 +181,7 @@ int main(int argc, char **argv)
 				 else
 				 {
 					 tab[0][strlen(tab[0])-1]='\0'; // suppression du \n
+					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression des espaces
 					 float * tmp= malloc(sizeof(float));
 					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(cmd);
 					 else if(recherche_flo(tab[0], ct, tmp) == 1) printf("					%.20g\n", *(tmp) );
