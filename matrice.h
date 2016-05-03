@@ -17,6 +17,8 @@ pmatrice nouvelleMatrice(int hauteur, int largeur);
 
 pmatrice tabMatrice(int hauteur, int largeur, char ** tab);
 
+void afficheMatrice(pmatrice m)
+
 void identite(pmatrice m); // m devient une matrice identité
 
 // En commentaire, les commandes associées de minicas

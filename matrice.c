@@ -188,7 +188,7 @@ pmatrice transposition(pmatrice M)
   return m;
 }
 
-void afficheMatrix(pmatrice m)
+void afficheMatrice(pmatrice m)
 {
   int i,j;
 
@@ -196,8 +196,8 @@ void afficheMatrix(pmatrice m)
   {
     for(j = 0; j < m->largeur; j++)
     {
-      if(j == 0) printf("[");
-      printf("%f ", getElt(m,i,j));
+      if(j == 0) printf("[ ");
+      printf("%.20g ", getElt(m,i,j));
     }
     printf("]");
     printf("\n");

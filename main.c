@@ -73,7 +73,7 @@ void matrix(char * cmd)
 	colonnes= colonnes/lignes;
 	pmatrice mat;
 	mat = tabMatrice(lignes, colonnes, res);
-	afficheMatrix(mat);
+	afficheMatrice(mat);
 }
 
 int main(int argc, char **argv)
