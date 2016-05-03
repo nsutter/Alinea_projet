@@ -3,8 +3,11 @@
 
 #include "matrice.h"
 
-void remontee(pmatrice a, pmatrice b, pmatrice x);
-
-void addition_multiple(pmatrice a, pmatrice b, int h, int l, int coefficient);
+void remonteeMatrice(pmatrice a, pmatrice b, pmatrice x);
+void additionMultiple(pmatrice a, pmatrice b, int h, int l, float coefficient);
+int choixPivotPartiel(pmatrice a, int i);
+void echangeLigne(pmatrice a, pmatrice b, int i, int j);
+void triangulaireMatrice(pmatrice a, pmatrice b);
+void resolutionGauss(pmatrice a, pmatrice b, pmatrice x);
 
 #endif

@@ -1,33 +1,112 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "resolution.h"
+#include <math.h>
 
-void remontee(pmatrice a, pmatrice b, pmatrice x)
+void remonteeMatrice(pmatrice a, pmatrice b, pmatrice x)
 {
   int i, j, n = a->hauteur - 1;
 
   for(i = n; i >= 0; i--)
   {
-    setElt(x, 0, i, getElt(b, 0, i));
+    setElt(x, i, 0, getElt(b, i, 0));
 
     for(j = i + 1; j <= n; j++)
     {
-      setElt(x, 0, i, getElt(x, 0, i) - getElt(a, i, j) * getElt(x, 0, j));
+      setElt(x, i, 0, getElt(x, i, 0) - getElt(a, i, j) * getElt(x, j, 0));
     }
 
-    setElt(x, 0, i, getElt(x, 0, i) / getElt(a, i, i));
+    setElt(x, i, 0, getElt(x, i, 0) / getElt(a, i, i));
   }
 }
 
-
-void addition_multiple(pmatrice a, pmatrice b, int h, int l, int coefficient)
+void additionMultiple(pmatrice a, pmatrice b, int i, int j, float coefficient)
 {
-  int i;
+  int k;
+  float v, v2;
 
-  for(i = 0; i < a->hauteur; i++)
+  for(k = 0; k < a->hauteur; k++)
   {
-    setElt(a, h, i, getElt(a, h, i) + coefficient * getElt(a, l, i));
+    v = getElt(a, i, k) + coefficient * getElt(a, j, k);
+    setElt(a, i, k, v);
   }
 
-  setElt(b, 0, l, getElt(b, 0, l) + coefficient * getElt(b, 0, l));
+  v2 = getElt(b, i, 0) + coefficient * getElt(b, j, 0);
+  setElt(b, i, 0, v2);
+}
+
+int choixPivotPartiel(pmatrice a, int i)
+{
+  int t = i, j, n = a->hauteur;
+
+  float f = abs(getElt(a, i, i));
+
+  for(j = i; j < n; j++)
+  {
+    if(abs(getElt(a, j, i)) > f)
+    {
+      t = j;
+      f = abs(getElt(a, j, i));
+    }
+  }
+
+  return t;
+}
+
+void echangeLigne(pmatrice a, pmatrice b, int i, int j)
+{
+  int k;
+
+  float f;
+
+  for(k = 0; k < a->hauteur; k++)
+  {
+    f = getElt(a, i, k);
+    setElt(a, i, k, getElt(a, j, k));
+    setElt(a, j, k, f);
+  }
+
+  f = getElt(b, i, 0);
+  setElt(b, i, 0, getElt(b, j, 0));
+  setElt(b, j, 0, f);
+}
+
+void triangulaireMatrice(pmatrice a, pmatrice b)
+{
+  int i, j;
+  float v;
+
+  for(i = 0; i < a->hauteur - 1; i++)
+  {
+	  printf("i =%d\n",i);
+    j = choixPivotPartiel(a, i);
+    echangeLigne(a, b, i, j);
+    printf("APRES echangeLigne \n");
+    displayMatrix(a);
+    displayMatrix(b);
+
+    for(j = i + 1; j < a->hauteur; j++)
+    {
+      printf("YOLO ");
+      v = -(getElt(a, j, i) / getElt(a, i, i));
+      printf("v = %f\n",v);
+      additionMultiple(a, b, j, i, v);
+    }
+
+    printf("APRES additionMultiple \n");
+    displayMatrix(a);
+    displayMatrix(b);
+  }
+}
+
+void resolutionGauss(pmatrice a, pmatrice b, pmatrice x)
+{
+  displayMatrix(a);
+  displayMatrix(b);
+
+  triangulaireMatrice(a, b);
+  remonteeMatrice(a, b, x);
+
+  displayMatrix(a);
+  displayMatrix(b);
 }

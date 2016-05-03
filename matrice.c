@@ -49,6 +49,24 @@ pmatrice tabMatrice(int hauteur, int largeur, char ** tab)
   return m;
 }
 
+// pmatrice tabMatrice(int hauteur, int largeur, int tab[])
+// {
+//   pmatrice m = nouvelleMatrice(hauteur, largeur);
+//
+//   int i, j, k = 0;
+//
+//   for(i = 0; i < hauteur; i++)
+//   {
+//     for(j = 0; j < largeur; j++)
+//     {
+//       setElt(m, i, j, tab[k]);
+//       k++;
+//     }
+//   }
+//
+//   return m;
+// }
+
 void identite(pmatrice m)
 {
   int i, j;
@@ -204,29 +222,32 @@ void displayMatrix(pmatrice m)
   printf("\n");
 }
 
-/*
-int main()
+void libereMatrice(pmatrice a)
 {
+  int i;
 
-  //int tab[9] = {1, -1, 2, 3, 2, 1, 2, -3, -2};
-  int tab[9] = {1, -1, 2, 0, 5, -5, 0, 0, 7};
+  for(i = 0; i < a->hauteur; i++)
+  {
+    free(a->tab[i]);
+  }
 
-  pmatrice m1 = tabMatrice(3, 3, tab);
+  free(a->tab);
+  free(a);
+}
 
-  displayMatrix(m1);
-
-  //int tab2[3] = {5, 10, -10};
-  int tab2[3] = {5, -5, -21};
-
-  pmatrice m2 = tabMatrice(3, 1, tab2);
-
-  int tabres[3] = {0, 0, 0};
-
-  pmatrice mres = tabMatrice(3, 1, tabres);
-
-  displayMatrix(mres);
-
-  remontee(m1, m2, mres);
-
-  displayMatrix(mres);
-}*/
+// int main()
+// {
+//   int tab[9] = {1, -1, 2, 3, 2, 1, 2, -3, -2};
+//
+//   pmatrice m1 = tabMatrice(3, 3, tab);
+//
+//   int tab2[3] = {5, 10, -10};
+//
+//   pmatrice m2 = tabMatrice(3, 1, tab2);
+//
+//   pmatrice mres = nouvelleMatrice(3, 1);
+//
+//   resolutionGauss(m1, m2, mres);
+//
+//   displayMatrix(mres);
+// }
