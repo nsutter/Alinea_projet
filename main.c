@@ -119,7 +119,7 @@ pmatrice matrix(char * cmd, contexte * ct)
 			}
 			else
 			{
-				printf("erreur variable inconnue\n");
+				printf("					erreur variable inconnue\n");
 				free(res_f);
 				free(res);
 				free(res_flo);
@@ -153,7 +153,7 @@ pmatrice mult(char * cmd, contexte * ct)
 	else m2= recherche_mat(tab[1], ct);
 	if(m1 != NULL && m2 != NULL) return multiplication(m1, m2);
 	else
-		printf("erreur paramètre");
+		printf("					erreur paramètre");
 	return NULL;
 }
 
@@ -190,7 +190,7 @@ int main(int argc, char **argv)
 				 printf("Ligne : %s\n", line);
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
-
+				 int flag =0;
 				 char ** tab= separe(line, ":");
 
 				 int lg; int i;
@@ -199,10 +199,20 @@ int main(int argc, char **argv)
 				 {
 					 while(tab[1][0] == ' ')for(i=0; i< (int) strlen(tab[1]); i++) tab[1][i]=tab[1][i+1]; // suppression du premier espace
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression espace
-					 if(strncmp(tab[1], "matrix", 6) == 0)
+					 if(tab[1][0] < '0' || tab[1][0] > '9')
 					 {
-						 matrice * ptr_mat_tmp= matrix(tab[1], ct);
-						 if(ptr_mat_tmp != NULL)
+						 matrice * ptr_mat_tmp;
+						 if(strncmp(tab[1], "matrix", 6) == 0)
+						 {
+							 ptr_mat_tmp= matrix(tab[1], ct);
+							 flag = 1;
+						 }
+						 else if(strncmp(tab[1], "mult(", 5) == 0)
+						 {
+							 ptr_mat_tmp= mult(tab[1], ct);
+							 flag = 1;
+						 }
+						 if(flag == 1 && ptr_mat_tmp != NULL)
 						 {
 							 afficheMatrice(ptr_mat_tmp);
 							 mat m= malloc(sizeof(mat));
@@ -213,25 +223,10 @@ int main(int argc, char **argv)
 							 m->pointeur= ptr_mat_tmp;
 							 ct->tab_mat[ct->longueurm-1]= m;
 						 }
+						 else if(flag == 1)
+						 	printf("					erreur\n");
 						 else
-							printf("erreur\n");
-					 }
-					 else if(strncmp(tab[1], "matrix", 6) == 0)
-					 {
-						 matrice * ptr_mat_tmp= mult(tab[1], ct);
-						 if(ptr_mat_tmp != NULL)
-						 {
-							 afficheMatrice(ptr_mat_tmp);
-							 mat m= malloc(sizeof(mat));
-							 m->nom= malloc(strlen(tab[0]));
-							 strcpy(m->nom, tab[0]);
-							 ct->longueurm++;
-							 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
-							 m->pointeur= ptr_mat_tmp;
-							 ct->tab_mat[ct->longueurm-1]= m;
-						 }
-						 else
-							printf("erreur\n");
+						 	printf("					cmd not found\n");
 					 }
 					 else
 					 {
@@ -249,8 +244,7 @@ int main(int argc, char **argv)
 				 {
 					 tab[0][strlen(tab[0])-1]='\0'; // suppression du \n
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression des espaces
-
-					 if(strncmp(tab[0], "matrix", 6) == 0)
+					 if(strncmp(tab[0], "matrix(", 7) == 0)
 					 {
 						 matrice * m= matrix(cmd, ct);
 						 if(m!=NULL)
@@ -259,9 +253,9 @@ int main(int argc, char **argv)
 							 // free la matrice
 						 }
 						 else
-							printf("erreur");
+							printf("					erreur");
 					 }
-					 else if(strncmp(tab[0], "mult", 4) == 0)
+					 else if(strncmp(tab[0], "mult(", 5) == 0)
 					 {
 						 matrice * m= mult(tab[0], ct);
 						 if(m!=NULL)
@@ -270,7 +264,7 @@ int main(int argc, char **argv)
 							 // free la matrice
 						 }
 						 else
-						 	printf("erreur: multiplication impossible");
+						 	printf("					erreur: multiplication impossible");
 					 }
 					 else
 					 {

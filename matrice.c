@@ -199,7 +199,7 @@ void afficheMatrice(pmatrice m)
     {
       for(j = 0; j < m->largeur; j++)
       {
-        if(j == 0) printf("[ ");
+        if(j == 0) printf("         [ ");
         printf("%.20g ", getElt(m,i,j));
       }
       printf("]");
