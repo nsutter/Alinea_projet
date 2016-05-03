@@ -21,3 +21,16 @@ pmatrice remontee(pmatrice a, pmatrice b, pmatrice x)
 
   return x;
 }
+
+
+pmatrice addition_multiple(pmatrice a, pmatrice b, int h, int l, int coefficient)
+{
+  int i;
+
+  for(i = 0; i < a->hauteur; i++)
+  {
+    setElt(a, h, i, getElt(a, h, i) + coefficient * getElt(a, l, i))
+  }
+
+  setElt(b, 0, l, getElt(b, 0, l) + coefficient * getElt(b, 0, l));
+}
