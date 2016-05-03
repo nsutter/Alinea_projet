@@ -50,6 +50,13 @@ char **separe( char *chaine, const char *separateurs )
 }
 
 
+void shift(char * tab, int pos)
+{
+	int i;
+	for(i=pos; i< (int)strlen(tab), i++)
+		tab[i]=tab[i+1];
+}
+
 matrice * recherche_mat(char * nom_rech, contexte * c)
 {
 	int i;
@@ -74,6 +81,17 @@ int recherche_flo(char * nom_rech, contexte * c, float* res)
 		}
 	}
 	return 0;
+}
+
+pmatrice mult(char * cmd, contexte * ct)
+{
+	shift(cmd, 0);shift(cmd, 0);shift(cmd, 0);shift(cmd, 0);
+	int i;
+	for(i=0; i<(int)strlen(cmd); i++)
+	{
+		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ') shift(cmd, i);
+	}
+	printf("%s \n", cmd);
 }
 
 pmatrice matrix(char * cmd, contexte * ct)
@@ -203,6 +221,7 @@ int main(int argc, char **argv)
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression des espaces
 
 					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(cmd, ct);
+					 else if(strncmp(tab[0], "mult", 4) == 0) mult(tab[0], ct);
 					 else
 					 {
 						 float * tmp= malloc(sizeof(float));
@@ -212,6 +231,7 @@ int main(int argc, char **argv)
 						 free(tmp);
 					 }
 				 }
+				 free(tab);
          free(line); line=NULL;
          printf("\n>");
        }
