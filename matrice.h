@@ -3,10 +3,10 @@
 
 typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
 
-typedef struct{char * nom; matrice * pointeur;} *donnee_mat;
-typedef struct{char * nom; float * pointeur;} *donnee_flo;
+typedef struct{char * nom; matrice * pointeur;} *mat;
+typedef struct{char * nom; float val;} *flo;
 
-typedef struct{donnee_mat * donnee_m; donnee_flo * donnee_f; int longueurm; int longueurf;} contexte;
+typedef struct{mat * tab_mat; flo * tab_flo; int longueurm; int longueurf;} contexte;
 
 #include "resolution.h"
 
@@ -15,7 +15,9 @@ void setElt(pmatrice m, int i, int j, float valeur);
 
 pmatrice nouvelleMatrice(int hauteur, int largeur);
 
-pmatrice tabMatrice(int hauteur, int largeur, char ** tab);
+pmatrice tabMatrice(int hauteur, int largeur, float * tab);
+
+void afficheMatrice(pmatrice m);
 
 void identite(pmatrice m); // m devient une matrice identité
 

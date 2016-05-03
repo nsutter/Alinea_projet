@@ -31,7 +31,7 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
   return m;
 }
 
-pmatrice tabMatrice(int hauteur, int largeur, char ** tab)
+pmatrice tabMatrice(int hauteur, int largeur, float * tab)
 {
   pmatrice m = nouvelleMatrice(hauteur, largeur);
 
@@ -41,7 +41,7 @@ pmatrice tabMatrice(int hauteur, int largeur, char ** tab)
   {
     for(j = 0; j < largeur; j++)
     {
-      setElt(m, i, j, atof(tab[k]));
+      setElt(m, i, j, tab[k]);
       k++;
     }
   }
@@ -206,7 +206,7 @@ pmatrice transposition(pmatrice M)
   return m;
 }
 
-void displayMatrix(pmatrice m)
+void afficheMatrice(pmatrice m)
 {
   int i,j;
 
@@ -214,8 +214,10 @@ void displayMatrix(pmatrice m)
   {
     for(j = 0; j < m->largeur; j++)
     {
-      printf("%f ", getElt(m,i,j));
+      if(j == 0) printf("[ ");
+      printf("%.20g ", getElt(m,i,j));
     }
+    printf("]");
     printf("\n");
   }
 
