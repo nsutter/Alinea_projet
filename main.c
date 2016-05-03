@@ -4,12 +4,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
-
-typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
-
-typedef struct{char * nom; matrice * pointeur;} *donnee_mat;
-typedef struct{char * nom; float * pointeur;} *donnee_flo;
-typedef struct{donnee_mat * donnee_m; donnee_flo * donnee_f; int longueurm; int longueurf;} contexte;
+#include "matrice.h"
+#include "resolution.h"
 
 char **separe( char *chaine, const char *separateurs )
 {

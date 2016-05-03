@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
 #include "matrice.h"
@@ -207,6 +206,7 @@ void displayMatrix(pmatrice m)
   printf("\n");
 }
 
+/*
 int main()
 {
 
@@ -231,4 +231,4 @@ int main()
   remontee(m1, m2, mres);
 
   displayMatrix(mres);
-}
+}*/
