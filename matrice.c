@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "matrice.h"
 
 float getElt(pmatrice m, int i, int j)
 {
@@ -22,7 +23,7 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
 
   int i, j;
 
-  m->tab = malloc(hauteur * sizeof(float*))
+  m->tab = malloc(hauteur * sizeof(float*));
 
   for(i = 0; i < m->hauteur; i++)
   {
@@ -98,7 +99,7 @@ pmatrice soustraction(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // soustraction possible
   {
-    pmatrice m = nouvelleMatrice(m1->largeur, m1->hauteur); // erreur ?
+    pmatrice m = nouvelleMatrice(m1->hauteur, m1->largeur);
 
     int i, j;
 
@@ -165,7 +166,7 @@ pmatrice multiplication_scal(pmatrice M, float valeur)
   {
     for(j = 0; j < M->largeur; j++)
     {
-      setElt(m, i, j, v * getElt(M, i, j));
+      setElt(m, i, j, valeur * getElt(M, i, j));
     }
   }
 
@@ -182,7 +183,51 @@ pmatrice transposition(pmatrice M)
   {
     for(j = 0; j < M->largeur; j++)
     {
-      setElt(m, j, i, getElt(M, i, j)));
+      setElt(m, j, i, getElt(M, i, j));
     }
   }
+
+  return m;
+}
+
+void displayMatrix(pmatrice m)
+{
+  int i,j;
+
+  for(i = 0; i < m->hauteur; i++)
+  {
+    for(j = 0; j < m->largeur; j++)
+    {
+      printf("%f ", getElt(m,i,j));
+    }
+    printf("\n");
+  }
+
+  printf("\n");
+}
+
+int main()
+{
+
+  //int tab[9] = {1, -1, 2, 3, 2, 1, 2, -3, -2};
+  int tab[9] = {1, -1, 2, 0, 5, -5, 0, 0, 7};
+
+  pmatrice m1 = tabMatrice(3, 3, tab);
+
+  displayMatrix(m1);
+
+  //int tab2[3] = {5, 10, -10};
+  int tab2[3] = {5, -5, -21};
+
+  pmatrice m2 = tabMatrice(3, 1, tab2);
+
+  int tabres[3] = {0, 0, 0};
+
+  pmatrice mres = tabMatrice(3, 1, tabres);
+
+  displayMatrix(mres);
+
+  remontee(m1, m2, mres);
+
+  displayMatrix(mres);
 }

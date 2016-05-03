@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "resolution.h"
 
-// typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
-
-pmatrice remontee(pmatrice a, pmatrice b, pmatrice x)
+void remontee(pmatrice a, pmatrice b, pmatrice x)
 {
   int i, j, n = a->hauteur - 1;
 
@@ -18,18 +17,16 @@ pmatrice remontee(pmatrice a, pmatrice b, pmatrice x)
 
     setElt(x, 0, i, getElt(x, 0, i) / getElt(a, i, i));
   }
-
-  return x;
 }
 
 
-pmatrice addition_multiple(pmatrice a, pmatrice b, int h, int l, int coefficient)
+void addition_multiple(pmatrice a, pmatrice b, int h, int l, int coefficient)
 {
   int i;
 
   for(i = 0; i < a->hauteur; i++)
   {
-    setElt(a, h, i, getElt(a, h, i) + coefficient * getElt(a, l, i))
+    setElt(a, h, i, getElt(a, h, i) + coefficient * getElt(a, l, i));
   }
 
   setElt(b, 0, l, getElt(b, 0, l) + coefficient * getElt(b, 0, l));

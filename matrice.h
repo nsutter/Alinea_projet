@@ -1,6 +1,10 @@
 #ifndef MATRICE_H
 #define MATRICE_H
 
+typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
+
+#include "resolution.h"
+
 float getElt(pmatrice m, int i, int j);
 void setElt(pmatrice m, int i, int j, float valeur);
 
