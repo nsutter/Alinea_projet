@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
-
 float getElt(pmatrice m, int i, int j)
 {
   return m->tab[i][j];
@@ -13,11 +11,70 @@ void setElt(pmatrice m, int i, int j, float valeur)
   m->tab[i][j] = valeur;
 }
 
+// typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
+
+pmatrice nouvelleMatrice(int hauteur, int largeur)
+{
+  pmatrice m = malloc(sizeof(matrice));
+
+  m->hauteur = hauteur;
+  m->largeur = largeur;
+
+  int i, j;
+
+  m->tab = malloc(hauteur * sizeof(float*))
+
+  for(i = 0; i < m->hauteur; i++)
+  {
+    m->tab[i] = malloc(largeur * sizeof(float));
+  }
+
+  return m;
+}
+
+pmatrice tabMatrice(int hauteur, int largeur, int tab[])
+{
+  pmatrice m = nouvelleMatrice(hauteur, largeur);
+
+  int i, j, k = 0;
+
+  for(i = 0; i < hauteur; i++)
+  {
+    for(j = 0; j < largeur; j++)
+    {
+      setElt(m, i, j, tab[k]);
+      k++;
+    }
+  }
+
+  return m;
+}
+
+void identite(pmatrice m)
+{
+  int i, j;
+
+  for(i = 0; i < m->hauteur; i++)
+  {
+    for(j = 0; j < m->largeur; j++)
+    {
+      if(i == j)
+      {
+        setElt(m, i, j, 1);
+      }
+      else
+      {
+        setElt(m, i, j, 0);
+      }
+    }
+  }
+}
+
 pmatrice addition(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // addition possible
   {
-    pmatrice m = nouvelleMatrice(m1->largeur,m1->hauteur);
+    pmatrice m = nouvelleMatrice(m1->hauteur, m1->largeur);
 
     int i, j;
 
@@ -41,7 +98,7 @@ pmatrice soustraction(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // soustraction possible
   {
-    pmatrice m = nouvelleMatrice(m1->largeur,m1->hauteur);
+    pmatrice m = nouvelleMatrice(m1->largeur, m1->hauteur); // erreur ?
 
     int i, j;
 
@@ -78,7 +135,7 @@ pmatrice multiplication(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->hauteur)
   {
-    pmatrice m = nouvelleMatrice(m1->hauteur,m2->largeur);
+    pmatrice m = nouvelleMatrice(m1->hauteur, m2->largeur);
 
     int i, j;
 
@@ -98,8 +155,34 @@ pmatrice multiplication(pmatrice m1, pmatrice m2)
   }
 }
 
-int main(int argc, char *argv[])
+pmatrice multiplication_scal(pmatrice M, float valeur)
 {
+  pmatrice m = nouvelleMatrice(M->hauteur, M->largeur);
 
-  return 0;
+  int i, j;
+
+  for(i = 0; i < M->hauteur; i++)
+  {
+    for(j = 0; j < M->largeur; j++)
+    {
+      setElt(m, i, j, v * getElt(M, i, j));
+    }
+  }
+
+  return m;
+}
+
+pmatrice transposition(pmatrice M)
+{
+  pmatrice m = nouvelleMatrice(M->largeur, M->hauteur);
+
+  int i, j;
+
+  for(i = 0; i < M->hauteur; i++)
+  {
+    for(j = 0; j < M->largeur; j++)
+    {
+      setElt(m, j, i, getElt(M, i, j)));
+    }
+  }
 }

@@ -3,10 +3,19 @@
 
 float getElt(pmatrice m, int i, int j);
 void setElt(pmatrice m, int i, int j, float valeur);
-pmatrice addition(pmatrice m1, pmatrice m2);
-pmatrice soustraction(pmatrice m1, pmatrice m2);
-float produit(pmatrice m1, pmatrice m2, int a, int b);
-pmatrice multiplication(pmatrice m1, pmatrice m2);
 
+pmatrice nouvelleMatrice(int hauteur, int largeur);
+
+pmatrice tabMatrice(int hauteur, int largeur, int tab[]);
+
+void identite(pmatrice m); // m devient une matrice identité
+
+// En commentaire, les commandes associées de minicas
+pmatrice addition(pmatrice m1, pmatrice m2); // addition
+pmatrice soustraction(pmatrice m1, pmatrice m2); // sub
+float produit(pmatrice m1, pmatrice m2, int a, int b);
+pmatrice multiplication(pmatrice m1, pmatrice m2); // mult
+pmatrice multiplication_scal(pmatrice M, float valeur); // mult_scal
+pmatrice transposition(pmatrice M); // transpose
 
 #endif
