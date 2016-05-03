@@ -190,20 +190,24 @@ pmatrice transposition(pmatrice M)
 
 void afficheMatrice(pmatrice m)
 {
-  int i,j;
-
-  for(i = 0; i < m->hauteur; i++)
+  if(m == NULL){printf("erreur");}
+  else
   {
-    for(j = 0; j < m->largeur; j++)
+    int i,j;
+
+    for(i = 0; i < m->hauteur; i++)
     {
-      if(j == 0) printf("[ ");
-      printf("%.20g ", getElt(m,i,j));
+      for(j = 0; j < m->largeur; j++)
+      {
+        if(j == 0) printf("[ ");
+        printf("%.20g ", getElt(m,i,j));
+      }
+      printf("]");
+      printf("\n");
     }
-    printf("]");
+
     printf("\n");
   }
-
-  printf("\n");
 }
 
 /*
