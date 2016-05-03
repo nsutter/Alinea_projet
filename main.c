@@ -53,12 +53,29 @@ char **separe( char *chaine, const char *separateurs )
 	return(tab);
 }
 
+// matrix([11,2, 3], [3,4, 5])
 void matrix(char * cmd)
 {
-	int i, j;
+	int i, j, lignes=0, colonnes=0;
+	int lg= strlen(cmd);
 	for(i=0; cmd[i] != '\n' && cmd[i] != '('; i++);
 	for(j=i; cmd[j] != '\n'; j++)
 		cmd[j-i]= cmd[j];
+	cmd[j-i]= '\0';
+	int bool=1;
+	for(i=0; i<lg-1; i++)
+		cmd[i]=cmd[i+2];
+	lg = lg-2;
+	for(i=0; cmd[i] != '\0'; i++)
+	{
+		if(cmd[i] == ']' && bool == 1) {for(j=i; j<lg; j++) cmd[j]= cmd[j+1]; i--; lg --; lignes++;}
+		else if(cmd[i] == ']' || cmd[i] == ' ' || cmd[i] == '[' || cmd[i] == ')') {for(j=i; j<lg; j++) cmd[j]= cmd[j+1]; i--; lg --;}
+	}
+	char ** res= separe(cmd, ",");
+	for(i=0; res[i] != NULL; i++)
+		colonnes ++;
+	colonnes= colonnes/lignes;
+	printf("ligne: %d, colonne: %d", lignes, colonnes);
 }
 
 int main(int argc, char **argv)
@@ -92,7 +109,11 @@ int main(int argc, char **argv)
        {
          if(strcmp(line, "quit\n") == 0){exit(0);}
 				 printf("Ligne : %s\n", line);
+				 char cmd[strlen(line)];
+				 strcpy(cmd, line);
+
 				 char ** tab= separe(line, " ");
+
 				 int lg;
 				 for(lg=0; tab[lg] != NULL ; lg++) ;
 				 if(lg>1 && strcmp(tab[1], ":") == 0)
@@ -110,7 +131,7 @@ int main(int argc, char **argv)
 				 }
 				 else
 				 {
-					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(line);
+					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(cmd);
 					 else printf("					cmd not found\n");
 				 }
          free(line); line=NULL;
