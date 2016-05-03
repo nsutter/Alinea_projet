@@ -15,7 +15,7 @@ void setElt(pmatrice m, int i, int j, float valeur);
 
 pmatrice nouvelleMatrice(int hauteur, int largeur);
 
-pmatrice tabMatrice(int hauteur, int largeur, int tab[]);
+pmatrice tabMatrice(int hauteur, int largeur, char ** tab);
 
 void identite(pmatrice m); // m devient une matrice identité
 

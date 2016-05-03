@@ -12,8 +12,6 @@ void setElt(pmatrice m, int i, int j, float valeur)
   m->tab[i][j] = valeur;
 }
 
-// typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
-
 pmatrice nouvelleMatrice(int hauteur, int largeur)
 {
   pmatrice m = malloc(sizeof(matrice));
@@ -21,7 +19,7 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
   m->hauteur = hauteur;
   m->largeur = largeur;
 
-  int i, j;
+  int i;
 
   m->tab = malloc(hauteur * sizeof(float*));
 
@@ -121,7 +119,7 @@ pmatrice soustraction(pmatrice m1, pmatrice m2)
 
 float produit(pmatrice m1, pmatrice m2, int a, int b)
 {
-  int i, j;
+  int i;
   float f = 0;
 
   for(i = 0; i < m1->largeur; i++)
