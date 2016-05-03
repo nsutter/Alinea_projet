@@ -11,6 +11,45 @@ void setElt(pmatrice m, int i, int j, float valeur)
   m->tab[i][j] = valeur;
 }
 
+// typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
+
+pmatrice nouvelleMatrice(int hauteur, int largeur)
+{
+  pmatrice m = malloc(sizeof(matrice));
+
+  m->hauteur = hauteur;
+  m->largeur = largeur;
+
+  int i, j;
+
+  m->tab = malloc(hauteur * sizeof(float*))
+
+  for(i = 0; i < m->hauteur; i++)
+  {
+    m->tab[i] = malloc(largeur * sizeof(float));
+  }
+
+  return m;
+}
+
+pmatrice tabMatrice(int hauteur, int largeur, int tab[])
+{
+  pmatrice m = nouvelleMatrice(hauteur, largeur);
+
+  int i, j, k = 0;
+
+  for(i = 0; i < hauteur; i++)
+  {
+    for(j = 0; j < largeur; j++)
+    {
+      setElt(m, i, j, tab[k]);
+      k++;
+    }
+  }
+
+  return m;
+}
+
 void identite(pmatrice m)
 {
   int i, j;
@@ -35,7 +74,7 @@ pmatrice addition(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // addition possible
   {
-    pmatrice m = nouvelleMatrice(m1->largeur, m1->hauteur);
+    pmatrice m = nouvelleMatrice(m1->hauteur, m1->largeur);
 
     int i, j;
 
@@ -59,7 +98,7 @@ pmatrice soustraction(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // soustraction possible
   {
-    pmatrice m = nouvelleMatrice(m1->largeur, m1->hauteur);
+    pmatrice m = nouvelleMatrice(m1->largeur, m1->hauteur); // erreur ?
 
     int i, j;
 
@@ -146,10 +185,4 @@ pmatrice transposition(pmatrice M)
       setElt(m, j, i, getElt(M, i, j)));
     }
   }
-}
-
-int main(int argc, char *argv[])
-{
-
-  return 0;
 }
