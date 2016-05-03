@@ -49,6 +49,33 @@ char **separe( char *chaine, const char *separateurs )
 	return(tab);
 }
 
+
+matrice * recherche_mat(char * nom_rech, contexte * c)
+{
+	int i;
+	for(i=0; i< c->longueurm; i++)
+	{
+		if(strcmp(c->tab_mat[i]->nom, nom_rech) == 0)
+			return c->tab_mat[i]->pointeur;
+	}
+
+	return NULL;
+}
+
+int recherche_flo(char * nom_rech, contexte * c, float* res)
+{
+	int i;
+	for(i=0; i< c->longueurf; i++)
+	{
+		if(strcmp(c->tab_flo[i]->nom, nom_rech) == 0)
+		{
+			*res= c->tab_flo[i]->val;
+			return 1;
+		}
+	}
+	return 0;
+}
+
 // matrix([11,2, 3], [3,4, 5])
 pmatrice matrix(char * cmd)
 {
@@ -128,12 +155,12 @@ int main(int argc, char **argv)
 				 if(lg>1)
 				 {
 					 while(tab[1][0] == ' ')for(i=0; i< (int) strlen(tab[1]); i++) tab[1][i]=tab[1][i+1]; // suppression du premier espace
-					 if(tab[0][strlen(tab[0]-1)] == ' ') tab[0][strlen(tab[0]-1)]= '\0';
+					 while(tab[0][strlen(tab[0]-1)] == ' ') tab[0][strlen(tab[0]-1)]= '\0';
 					 if(strncmp(tab[1], "matrix", 6) == 0)
 					 {
 						 mat m= malloc(sizeof(mat));
 						 m->nom= malloc(strlen(tab[0]));
-						 strcpy(tab[0], m->nom);
+						 strcpy(m->nom, tab[0]);
 						 ct->longueurm++;
 						 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
 						 m->pointeur= matrix(tab[1]);
@@ -142,8 +169,8 @@ int main(int argc, char **argv)
 					 else
 					 {
 						 flo f= malloc(sizeof(flo));
-						 f->nom= malloc(strlen(tab[0]));
-						 strcpy(tab[0], f->nom);
+						 f->nom= malloc(strlen(tab[0])+1 );
+						 strcpy(f->nom, tab[0]);
 						 f->val= atof(tab[1]);
 						 ct->longueurf++;
 						 ct->tab_flo= realloc(ct->tab_flo, ct->longueurf*sizeof(flo));
@@ -153,8 +180,13 @@ int main(int argc, char **argv)
 				 }
 				 else
 				 {
+					 tab[0][strlen(tab[0])-1]='\0'; // suppression du \n
+					 float * tmp= malloc(sizeof(float));
 					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(cmd);
+					 else if(recherche_flo(tab[0], ct, tmp) == 1) printf("					%.20g\n", *(tmp) );
+					 else if(recherche_mat(tab[0], ct) != NULL) afficheMatrice(recherche_mat(tab[0], ct));
 					 else printf("					cmd not found\n");
+					 free(tmp);
 				 }
          free(line); line=NULL;
          printf("\n>");
