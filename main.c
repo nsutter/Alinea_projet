@@ -71,6 +71,9 @@ void matrix(char * cmd)
 	for(i=0; res[i] != NULL; i++)
 		colonnes ++;
 	colonnes= colonnes/lignes;
+	pmatrice mat;
+	mat = tabMatrice(lignes, colonnes, res);
+	afficheMatrix(mat);
 }
 
 int main(int argc, char **argv)
