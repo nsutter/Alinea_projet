@@ -31,7 +31,7 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
   return m;
 }
 
-pmatrice tabMatrice(int hauteur, int largeur, char ** tab)
+pmatrice tabMatrice(int hauteur, int largeur, float * tab)
 {
   pmatrice m = nouvelleMatrice(hauteur, largeur);
 
@@ -41,7 +41,7 @@ pmatrice tabMatrice(int hauteur, int largeur, char ** tab)
   {
     for(j = 0; j < largeur; j++)
     {
-      setElt(m, i, j, atof(tab[k]));
+      setElt(m, i, j, tab[k]);
       k++;
     }
   }

@@ -50,7 +50,7 @@ char **separe( char *chaine, const char *separateurs )
 }
 
 // matrix([11,2, 3], [3,4, 5])
-void matrix(char * cmd)
+pmatrice matrix(char * cmd)
 {
 	int i, j, lignes=0, colonnes=0;
 	int lg= strlen(cmd);
@@ -72,11 +72,19 @@ void matrix(char * cmd)
 		colonnes ++;
 	colonnes= colonnes/lignes;
 	pmatrice mat;
-	mat = tabMatrice(lignes, colonnes, res);
+	float *res_f= malloc(lignes*colonnes*sizeof(float));
+
+	for(i=0; i<colonnes*lignes; i++)
+	{
+		for(j=0; j<(int)strlen(res[i]);j++) if(res[i][j]<'0' && res[i][j]>'9' && res[i][j] != '.'); // remplacer
+		else
+			res_f[i]= atof(res[i]);
+	}
+	mat = tabMatrice(lignes, colonnes, res_f);
 	afficheMatrice(mat);
-	for(i=0; res[i] != NULL; i++)
-		free(res[i]);
+	free(res_f);
 	free(res);
+	return mat;
 }
 
 int main(int argc, char **argv)
@@ -88,9 +96,9 @@ int main(int argc, char **argv)
    size_t n=0; // initialisation sans importance
 
 	 contexte* ct= malloc(sizeof(contexte));
-	 ct->donnee_m= malloc(0*sizeof(donnee_mat));
+	 ct->tab_mat= malloc(0*sizeof(mat));
 	 ct->longueurm= 0;
-	 ct->donnee_f= malloc(0*sizeof(donnee_flo));
+	 ct->tab_flo= malloc(0*sizeof(flo));
 	 ct->longueurf= 0;
 
    if (!fstat(0, &buf) && S_ISREG(buf.st_mode))
@@ -113,22 +121,35 @@ int main(int argc, char **argv)
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
 
-				 char ** tab= separe(line, " ");
+				 char ** tab= separe(line, ":");
 
-				 int lg;
+				 int lg; int i;
 				 for(lg=0; tab[lg] != NULL ; lg++) ;
-				 if(lg>1 && strcmp(tab[1], ":") == 0)
+				 if(lg>1)
 				 {
-					 // on traite les données avec
-
-					 ct->longueurf++;
-					 ct->donnee_f= realloc(ct->donnee_f, ct->longueurf*sizeof(donnee_flo));
-					 donnee_flo d= malloc(sizeof(donnee_flo));
-					 d->nom= malloc(strlen(tab[0])+1);
-					 strcpy(tab[1], d->nom);
-					 d->pointeur= malloc(sizeof(float));
-					 *(d->pointeur)= atof(tab[2]);
-					 printf("					%f\n", *d->pointeur);
+					 while(tab[1][0] == ' ')for(i=0; i< (int) strlen(tab[1]); i++) tab[1][i]=tab[1][i+1]; // suppression du premier espace
+					 if(tab[0][strlen(tab[0]-1)] == ' ') tab[0][strlen(tab[0]-1)]= '\0';
+					 if(strncmp(tab[1], "matrix", 6) == 0)
+					 {
+						 mat m= malloc(sizeof(mat));
+						 m->nom= malloc(strlen(tab[0]));
+						 strcpy(tab[0], m->nom);
+						 ct->longueurm++;
+						 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
+						 m->pointeur= matrix(tab[1]);
+						 ct->tab_mat[ct->longueurm-1]= m;
+					 }
+					 else
+					 {
+						 flo f= malloc(sizeof(flo));
+						 f->nom= malloc(strlen(tab[0]));
+						 strcpy(tab[0], f->nom);
+						 f->val= atof(tab[1]);
+						 ct->longueurf++;
+						 ct->tab_flo= realloc(ct->tab_flo, ct->longueurf*sizeof(flo));
+						 ct->tab_flo[ct->longueurf-1]= f;
+						 printf("					%.20g\n", f->val);
+					 }
 				 }
 				 else
 				 {
