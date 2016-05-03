@@ -7,9 +7,59 @@
 
 typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
 
-typedef struct{char * nom; void * pointeur;} donnee;
+typedef struct{char * nom; matrice * pointeur;} *donnee_mat;
+typedef struct{char * nom; float * pointeur;} *donnee_flo;
+typedef struct{donnee_mat * donnee_m; donnee_flo * donnee_f; int longueurm; int longueurf;} contexte;
 
-typedef struct{ void ** donnee; int longueur;} contexte;
+char **separe( char *chaine, const char *separateurs )
+{
+	char **tab;
+	int i, s, m, size=10;
+
+	tab = malloc( size * sizeof(char*) );
+	m = 0;
+	i = 0;
+	while( chaine[i] != 0 )
+	{
+		// saute un séparateur
+		for( s=0 ; separateurs[s]!=0 ; s++ )
+			if( chaine[i] == separateurs[s] )
+				break;
+		if( separateurs[s]!=0 )
+		{
+			chaine[i++] = 0;	// met un fin de chaine à la place du séparateur et avance
+			continue;	// les séparateurs n'ont pas été épuisés
+		}
+
+		if( chaine[i] != 0 )
+			tab[m++] = chaine+i;
+		if( m == size )
+		{
+			// si j'atteinds la limite de la taille de mon tableau, je l'agrandis.
+			size += 10;
+			tab = realloc( tab, size * sizeof(char*) );
+		}
+		// saute les caractères non séparateurs
+		for( ; chaine[i]!=0 ; i++ )
+		{
+			for( s=0 ; separateurs[s]!=0 ; s++ )
+				if( chaine[i] == separateurs[s] )
+					break;
+			if( separateurs[s]!=0 )
+				break;	// trouvé un caractère séparateur, j'arrête d'avancer et je passe au mot suivant
+		}
+	}
+	tab[m] = NULL;
+	return(tab);
+}
+
+void matrix(char * cmd)
+{
+	int i, j;
+	for(i=0; cmd[i] != '\n' && cmd[i] != '('; i++);
+	for(j=i; cmd[j] != '\n'; j++)
+		cmd[j-i]= cmd[j];
+}
 
 int main(int argc, char **argv)
 {
@@ -18,6 +68,12 @@ int main(int argc, char **argv)
    FILE *f_in = fdopen(0, "r");
    char *line;
    size_t n=0; // initialisation sans importance
+
+	 contexte* ct= malloc(sizeof(contexte));
+	 ct->donnee_m= malloc(0*sizeof(donnee_mat));
+	 ct->longueurm= 0;
+	 ct->donnee_f= malloc(0*sizeof(donnee_flo));
+	 ct->longueurf= 0;
 
    if (!fstat(0, &buf) && S_ISREG(buf.st_mode))
    {
@@ -34,31 +90,29 @@ int main(int argc, char **argv)
        line=NULL;
        while (getline(&line, &n, f_in)!=1)
        {
-         int lg= strlen(line);
-         char * chaine= malloc(lg);
-         strcpy(line, chaine);
-         if(strcmp(chaine, "quit\n") == 0){exit(0);}
-         int i;
-         int var=0, cmd=0;
-         for(i=0; i<n; i++)
-         {
-           if(line[i] == ':') var =i;
-           if(line[i] == '(') cmd =i;
-         }
-         if(strncmp(line, "matrix", 6) == 0)
-         {
-           printf("creation d'une matrice \n");
-           int ligne =0; int colonne =0;
-           for(i=cmd; i<n; i++)
-           {
-             if(line[i] == '[') {colonne ++;}
-             if(line[i] == ',' && colonne%2 == 1) ligne ++;
-           }
-           ligne= ligne/colonne;
-           ligne++;
-           //nouvelleMatrice(ligne, colonne);
-         }
-        //  printf("Ligne : %s\n", line);
+         if(strcmp(line, "quit\n") == 0){exit(0);}
+				 printf("Ligne : %s\n", line);
+				 char ** tab= separe(line, " ");
+				 int lg;
+				 for(lg=0; tab[lg] != NULL ; lg++) ;
+				 if(lg>1 && strcmp(tab[1], ":") == 0)
+				 {
+					 // on traite les données avec
+
+					 ct->longueurf++;
+					 ct->donnee_f= realloc(ct->donnee_f, ct->longueurf*sizeof(donnee_flo));
+					 donnee_flo d= malloc(sizeof(donnee_flo));
+					 d->nom= malloc(strlen(tab[0])+1);
+					 strcpy(tab[1], d->nom);
+					 d->pointeur= malloc(sizeof(float));
+					 *(d->pointeur)= atof(tab[2]);
+					 printf("					%f\n", *d->pointeur);
+				 }
+				 else
+				 {
+					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(line);
+					 else printf("					cmd not found\n");
+				 }
          free(line); line=NULL;
          printf("\n>");
        }
