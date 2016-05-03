@@ -76,8 +76,7 @@ int recherche_flo(char * nom_rech, contexte * c, float* res)
 	return 0;
 }
 
-// matrix([11,2, 3], [3,4, 5])
-pmatrice matrix(char * cmd)
+pmatrice matrix(char * cmd, contexte * ct)
 {
 	int i, j, lignes=0, colonnes=0;
 	int lg= strlen(cmd);
@@ -103,9 +102,25 @@ pmatrice matrix(char * cmd)
 
 	for(i=0; i<colonnes*lignes; i++)
 	{
-		for(j=0; j<(int)strlen(res[i]);j++) if(res[i][j]<'0' && res[i][j]>'9' && res[i][j] != '.'); // remplacer
+		float* res_flo= malloc(sizeof(float));
+		if(res[i][0]<'0' || res[i][0]>'9' && res[i][0] != '.')
+		{
+			if(recherche_flo(res[i], ct, res_flo) == 1)
+			{
+				res_f[i]=*res_flo;
+			}
+			else
+			{
+				printf("erreur variable inconnue\n");
+				free(res_f);
+				free(res);
+				free(res_flo);
+				return NULL;
+			}
+		}
 		else
 			res_f[i]= atof(res[i]);
+		free(res_flo);
 	}
 	mat = tabMatrice(lignes, colonnes, res_f);
 	afficheMatrice(mat);
@@ -158,13 +173,17 @@ int main(int argc, char **argv)
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression espace
 					 if(strncmp(tab[1], "matrix", 6) == 0)
 					 {
-						 mat m= malloc(sizeof(mat));
-						 m->nom= malloc(strlen(tab[0]));
-						 strcpy(m->nom, tab[0]);
-						 ct->longueurm++;
-						 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
-						 m->pointeur= matrix(tab[1]);
-						 ct->tab_mat[ct->longueurm-1]= m;
+						 matrice * ptr_mat_tmp= matrix(tab[1], ct);
+						 if(ptr_mat_tmp != NULL)
+						 {
+							 mat m= malloc(sizeof(mat));
+							 m->nom= malloc(strlen(tab[0]));
+							 strcpy(m->nom, tab[0]);
+							 ct->longueurm++;
+							 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
+							 m->pointeur= ptr_mat_tmp;
+							 ct->tab_mat[ct->longueurm-1]= m;
+						 }
 					 }
 					 else
 					 {
@@ -182,12 +201,16 @@ int main(int argc, char **argv)
 				 {
 					 tab[0][strlen(tab[0])-1]='\0'; // suppression du \n
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression des espaces
-					 float * tmp= malloc(sizeof(float));
-					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(cmd);
-					 else if(recherche_flo(tab[0], ct, tmp) == 1) printf("					%.20g\n", *(tmp) );
-					 else if(recherche_mat(tab[0], ct) != NULL) afficheMatrice(recherche_mat(tab[0], ct));
-					 else printf("					cmd not found\n");
-					 free(tmp);
+
+					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(cmd, ct);
+					 else
+					 {
+						 float * tmp= malloc(sizeof(float));
+						 if(recherche_flo(tab[0], ct, tmp) == 1) printf("					%.20g\n", *(tmp) );
+						 else if(recherche_mat(tab[0], ct) != NULL) afficheMatrice(recherche_mat(tab[0], ct));
+						 else printf("					cmd not found\n");
+						 free(tmp);
+					 }
 				 }
          free(line); line=NULL;
          printf("\n>");
