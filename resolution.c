@@ -92,16 +92,20 @@ void triangulaireMatrice(pmatrice a, pmatrice b)
   }
 }
 
-void resolutionGauss(pmatrice a, pmatrice b, pmatrice x)
+pmatrice resolutionGauss(pmatrice a, pmatrice b)
 {
-  displayMatrix(a);
-  displayMatrix(b);
+  pmatrice c = copieMatrice(a);
+  pmatrice d = copieMatrice(b);
 
-  triangulaireMatrice(a, b);
-  remonteeMatrice(a, b, x);
+  pmatrice res = nouvelleMatrice(b->hauteur, b->largeur);
 
-  displayMatrix(a);
-  displayMatrix(b);
+  triangulaireMatrice(c, d);
+  remonteeMatrice(c, d, res);
+
+  libereMatrice(c);
+  libereMatrice(d);
+
+  return res;
 }
 
 float triangulaireDeterminant(pmatrice a)
@@ -131,12 +135,17 @@ float triangulaireDeterminant(pmatrice a)
 float determinant(pmatrice a)
 {
   int i;
-  float v = triangulaireDeterminant(a);
 
-  for(i = 0; i < a->hauteur; i++)
+  pmatrice b = copieMatrice(a);
+
+  float v = triangulaireDeterminant(b);
+
+  for(i = 0; i < b->hauteur; i++)
   {
-    v = v * getElt(a, i, i);
+    v = v * getElt(b, i, i);
   }
+
+  libereMatrice(b);
 
   return v;
 }
