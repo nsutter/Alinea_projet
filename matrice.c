@@ -31,6 +31,23 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
   return m;
 }
 
+pmatrice copieMatrice(pmatrice a)
+{
+  pmatrice b = nouvelleMatrice(a->hauteur, a->largeur)
+
+  int i, j;
+
+  for(i = 0; i < b->hauteur; i++)
+  {
+    for(j = 0; j < b->largeur; j++)
+    {
+      setElt(b, i, j, getElt(a, i, j));
+    }
+  }
+
+  return b;
+}
+
 pmatrice tabMatrice(int hauteur, int largeur, float * tab)
 {
   pmatrice m = nouvelleMatrice(hauteur, largeur);

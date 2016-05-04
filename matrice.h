@@ -14,6 +14,7 @@ float getElt(pmatrice m, int i, int j);
 void setElt(pmatrice m, int i, int j, float valeur);
 
 pmatrice nouvelleMatrice(int hauteur, int largeur);
+pmatrice copieMatrice(pmatrice a);
 
 pmatrice tabMatrice(int hauteur, int largeur, float * tab);
 
