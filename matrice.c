@@ -49,24 +49,6 @@ pmatrice tabMatrice(int hauteur, int largeur, float * tab)
   return m;
 }
 
-// pmatrice tabMatrice(int hauteur, int largeur, int tab[])
-// {
-//   pmatrice m = nouvelleMatrice(hauteur, largeur);
-//
-//   int i, j, k = 0;
-//
-//   for(i = 0; i < hauteur; i++)
-//   {
-//     for(j = 0; j < largeur; j++)
-//     {
-//       setElt(m, i, j, tab[k]);
-//       k++;
-//     }
-//   }
-//
-//   return m;
-// }
-
 void identite(pmatrice m)
 {
   int i, j;
@@ -236,20 +218,3 @@ void libereMatrice(pmatrice a)
   free(a->tab);
   free(a);
 }
-
-// int main()
-// {
-//   int tab[9] = {1, -1, 2, 3, 2, 1, 2, -3, -2};
-//
-//   pmatrice m1 = tabMatrice(3, 3, tab);
-//
-//   int tab2[3] = {5, 10, -10};
-//
-//   pmatrice m2 = tabMatrice(3, 1, tab2);
-//
-//   pmatrice mres = nouvelleMatrice(3, 1);
-//
-//   resolutionGauss(m1, m2, mres);
-//
-//   displayMatrix(mres);
-// }
