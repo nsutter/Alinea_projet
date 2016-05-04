@@ -50,6 +50,32 @@ char **separe( char *chaine, const char *separateurs )
 }
 
 
+void free_context(contexte * ct)
+{
+	int i;
+	for(i=0; i<ct->longueurm; i++)
+	{
+		free(ct->tab_mat[i]->nom);
+		//free matrice
+		free(ct->tab_mat[i]);
+	}
+	free(ct->tab_mat);
+	for(i=0; i<ct->longueurf; i++)
+	{
+		free(ct->tab_flo[i]->nom);
+		free(ct->tab_flo[i]);
+	}
+	free(ct->tab_flo);
+	free(ct);
+}
+
+void shift(char * tab, int pos)
+{
+	int i;
+	for(i=pos; i< (int)strlen(tab); i++)
+		tab[i]=tab[i+1];
+}
+
 matrice * recherche_mat(char * nom_rech, contexte * c)
 {
 	int i;
@@ -76,8 +102,8 @@ int recherche_flo(char * nom_rech, contexte * c, float* res)
 	return 0;
 }
 
-// matrix([11,2, 3], [3,4, 5])
-pmatrice matrix(char * cmd)
+
+pmatrice matrix(char * cmd, contexte * ct)
 {
 	int i, j, lignes=0, colonnes=0;
 	int lg= strlen(cmd);
@@ -103,15 +129,75 @@ pmatrice matrix(char * cmd)
 
 	for(i=0; i<colonnes*lignes; i++)
 	{
-		for(j=0; j<(int)strlen(res[i]);j++) if(res[i][j]<'0' && res[i][j]>'9' && res[i][j] != '.'); // remplacer
+		float* res_flo= malloc(sizeof(float));
+		if((res[i][0]<'0' || res[i][0]>'9') && res[i][0] != '.')
+		{
+			if(recherche_flo(res[i], ct, res_flo) == 1)
+			{
+				res_f[i]=*res_flo;
+			}
+			else
+			{
+				printf("					erreur variable inconnue\n");
+				free(res_f);
+				free(res);
+				free(res_flo);
+				return NULL;
+			}
+		}
 		else
 			res_f[i]= atof(res[i]);
+		free(res_flo);
 	}
 	mat = tabMatrice(lignes, colonnes, res_f);
-	afficheMatrice(mat);
 	free(res_f);
 	free(res);
 	return mat;
+}
+
+pmatrice fonction(char * cmd, contexte * ct, int fct)
+{
+	while(cmd[0] != '(') shift(cmd, 0);
+	int i, virgule=0;
+	for(i=0; i<(int)strlen(cmd); i++)
+	{
+		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ' || cmd[i] == '\n')
+		{
+			shift(cmd, i);
+			i-- ;
+		}
+		else if(cmd[i] == ',') virgule=1;
+	}
+	if(virgule == 0)
+	{
+		printf("					erreur argument");
+		return NULL;
+	}
+	matrice * m1; matrice * m2;
+	char ** tab;
+	tab= separe(cmd, ",");
+	if(strncmp(tab[0], "matrix", 6) == 0)
+		m1=matrix(tab[0], ct);
+	else
+		m1= recherche_mat(tab[0], ct);
+
+	if(strncmp(tab[1], "matrix", 6) == 0)
+		m2=matrix(tab[1], ct);
+	else
+		m2= recherche_mat(tab[1], ct);
+
+	if(m1 != NULL && m2 != NULL)
+	{
+		if(fct == 1)
+			return multiplication(m1, m2);
+		else if(fct == 2)
+			return addition(m1, m2);
+		else if(fct == 3)
+			return soustraction(m1, m2);
+	}
+	else
+		printf("					erreur paramètre\n");
+	return NULL;
 }
 
 int main(int argc, char **argv)
@@ -147,7 +233,6 @@ int main(int argc, char **argv)
 				 printf("Ligne : %s\n", line);
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
-
 				 char ** tab= separe(line, ":");
 
 				 int lg; int i;
@@ -155,16 +240,38 @@ int main(int argc, char **argv)
 				 if(lg>1)
 				 {
 					 while(tab[1][0] == ' ')for(i=0; i< (int) strlen(tab[1]); i++) tab[1][i]=tab[1][i+1]; // suppression du premier espace
+					 tab[1][strlen(tab[1])]= '\0';
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression espace
-					 if(strncmp(tab[1], "matrix", 6) == 0)
+					 if(tab[1][0] < '0' || tab[1][0] > '9')
 					 {
-						 mat m= malloc(sizeof(mat));
-						 m->nom= malloc(strlen(tab[0]));
-						 strcpy(m->nom, tab[0]);
-						 ct->longueurm++;
-						 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
-						 m->pointeur= matrix(tab[1]);
-						 ct->tab_mat[ct->longueurm-1]= m;
+						 matrice * ptr_mat_tmp;
+						 int fct=0;
+						 if(strncmp(tab[1], "matrix", 6) == 0)
+						 {
+							 ptr_mat_tmp= matrix(tab[1], ct);
+							 fct = -1;
+						 }
+						 else if(strncmp(tab[1], "mult(", 5) == 0)
+							 fct = 1;
+						 else if(strncmp(tab[1], "addition(", 9) == 0)
+						 	 fct = 2;
+						 else if(strncmp(tab[1], "sub(", 4) == 0)
+						 	 fct = 3;
+						 if(fct > 0)
+							 ptr_mat_tmp= fonction(tab[1], ct, fct);
+						 if(fct != 0 && ptr_mat_tmp != NULL)
+						 {
+							 afficheMatrice(ptr_mat_tmp);
+							 mat m= malloc(sizeof(mat));
+							 m->nom= malloc(strlen(tab[0]));
+							 strcpy(m->nom, tab[0]);
+							 ct->longueurm++;
+							 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
+							 m->pointeur= ptr_mat_tmp;
+							 ct->tab_mat[ct->longueurm-1]= m;
+						 }
+						 else if(fct == 0)
+						 	printf("					cmd not found\n");
 					 }
 					 else
 					 {
@@ -180,15 +287,45 @@ int main(int argc, char **argv)
 				 }
 				 else
 				 {
+					 int fct =0;
 					 tab[0][strlen(tab[0])-1]='\0'; // suppression du \n
 					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression des espaces
-					 float * tmp= malloc(sizeof(float));
-					 if(strncmp(tab[0], "matrix", 6) == 0) matrix(cmd);
-					 else if(recherche_flo(tab[0], ct, tmp) == 1) printf("					%.20g\n", *(tmp) );
-					 else if(recherche_mat(tab[0], ct) != NULL) afficheMatrice(recherche_mat(tab[0], ct));
-					 else printf("					cmd not found\n");
-					 free(tmp);
+					 if(strncmp(tab[0], "matrix(", 7) == 0)
+					 {
+						 matrice * m= matrix(cmd, ct);
+						 if(m!=NULL)
+						 {
+							 afficheMatrice(m);
+							 // free la matrice
+						 }
+						 else
+							printf("					erreur");
+					 }
+					 else if(strncmp(tab[0], "mult(", 5) == 0)
+					 	 fct = 1;
+					 else if(strncmp(tab[0], "addition(", 9) == 0)
+						 fct = 2;
+					 else if(strncmp(tab[0], "sub(", 4) == 0)
+							fct = 3;
+					 else
+					 {
+						 float * tmp= malloc(sizeof(float));
+						 if(recherche_flo(tab[0], ct, tmp) == 1) printf("					%.20g\n", *(tmp) );
+						 else if(recherche_mat(tab[0], ct) != NULL) afficheMatrice(recherche_mat(tab[0], ct));
+						 else printf("					cmd not found\n");
+						 free(tmp);
+					 }
+					 if(fct > 0)
+					 {
+						 matrice * m= fonction(tab[0], ct, fct);
+						 if(m!=NULL)
+						 {
+							 afficheMatrice(m);
+							 // free la matrice
+						 }
+					 }
 				 }
+				 free(tab);
          free(line); line=NULL;
          printf("\n>");
        }
