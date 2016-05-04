@@ -50,6 +50,26 @@ char **separe( char *chaine, const char *separateurs )
 }
 
 
+void free_context(contexte * ct)
+{
+	int i;
+	for(i=0; i<longueurm; i++)
+	{
+		free(tab_mat[i]->nom);
+		//free matrice
+		free(tab_mat[i]);
+	}
+	free(tab_mat);
+	for(j=0; j<longueurf; j++)
+	{
+		free(tab_mat[i]->nom);
+		free(tab_mat[i]->valeur);
+		free(tab_mat[i]);
+	}
+	free(tab_mat);
+	free(ct);
+}
+
 void shift(char * tab, int pos)
 {
 	int i;
