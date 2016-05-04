@@ -53,20 +53,19 @@ char **separe( char *chaine, const char *separateurs )
 void free_context(contexte * ct)
 {
 	int i;
-	for(i=0; i<longueurm; i++)
+	for(i=0; i<ct->longueurm; i++)
 	{
-		free(tab_mat[i]->nom);
+		free(ct->tab_mat[i]->nom);
 		//free matrice
-		free(tab_mat[i]);
+		free(ct->tab_mat[i]);
 	}
-	free(tab_mat);
-	for(j=0; j<longueurf; j++)
+	free(ct->tab_mat);
+	for(i=0; i<ct->longueurf; i++)
 	{
-		free(tab_mat[i]->nom);
-		free(tab_mat[i]->valeur);
-		free(tab_mat[i]);
+		free(ct->tab_flo[i]->nom);
+		free(ct->tab_flo[i]);
 	}
-	free(tab_mat);
+	free(ct->tab_flo);
 	free(ct);
 }
 
