@@ -140,3 +140,30 @@ float determinant(pmatrice a)
 
   return v;
 }
+
+int rang(pmatrice a)
+{
+  pmatrice b = copieMatrice(a);
+
+  triangulaireMatrice(b);
+
+  int i, j, rang, flag;
+
+  for(i = 0; i < a->hauteur; i++)
+  {
+    flag = 0;
+
+    for(j = 0; j < a->largeur && flag == 0; j++)
+    {
+      if(getElt(a, i, j) != 0)
+      {
+        flag = 1;
+        rang++;
+      }
+    }
+  }
+
+  libereMatrice(b);
+
+  return rang;
+}

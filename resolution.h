@@ -13,4 +13,6 @@ void resolutionGauss(pmatrice a, pmatrice b, pmatrice x);
 float triangulaireDeterminant(pmatrice a);
 float determinant(pmatrice a);
 
+int rang(pmatrice a);
+
 #endif
