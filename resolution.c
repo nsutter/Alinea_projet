@@ -78,22 +78,15 @@ void triangulaireMatrice(pmatrice a, pmatrice b)
 
   for(i = 0; i < a->hauteur - 1; i++)
   {
-	  printf("i =%d\n",i);
     j = choixPivotPartiel(a, i);
     echangeLigne(a, b, i, j);
-    printf("APRES echangeLigne \n");
-    displayMatrix(a);
-    displayMatrix(b);
 
     for(j = i + 1; j < a->hauteur; j++)
     {
-      printf("YOLO ");
       v = -(getElt(a, j, i) / getElt(a, i, i));
-      printf("v = %f\n",v);
       additionMultiple(a, b, j, i, v);
     }
 
-    printf("APRES additionMultiple \n");
     displayMatrix(a);
     displayMatrix(b);
   }
@@ -109,4 +102,41 @@ void resolutionGauss(pmatrice a, pmatrice b, pmatrice x)
 
   displayMatrix(a);
   displayMatrix(b);
+}
+
+float triangulaireDeterminant(pmatrice a)
+{
+    int i, j;
+    float v = 1;
+
+    for(i = 0; i < a->hauteur - 1; i++)
+    {
+      j = choixPivotPartiel(a, i);
+
+      if(j != i)
+      {
+        echangeLigne(a, i, j);
+        v = -v;
+      }
+
+      for(j = i + 1; j < a->hauteur; j++)
+      {
+        additionMultiple(a, j, i, -getElt(a, j, i) / getElt(a, i, i));
+      }
+    }
+
+  return c;
+}
+
+float determinant(pmatrice a)
+{
+  int i;
+  float v = triangulaireDeterminant(a);
+
+  for(i = 0; i < a->hauteur; i++)
+  {
+    v = v * getElt(a, i, i);
+  }
+
+  return v;
 }

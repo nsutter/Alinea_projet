@@ -10,4 +10,7 @@ void echangeLigne(pmatrice a, pmatrice b, int i, int j);
 void triangulaireMatrice(pmatrice a, pmatrice b);
 void resolutionGauss(pmatrice a, pmatrice b, pmatrice x);
 
+float triangulaireDeterminant(pmatrice a);
+float determinant(pmatrice a);
+
 #endif
