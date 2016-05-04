@@ -139,10 +139,20 @@ pmatrice matrix(char * cmd, contexte * ct)
 pmatrice fonction(char * cmd, contexte * ct, int fct)
 {
 	while(cmd[0] != '(') shift(cmd, 0);
-	int i;
+	int i, virgule=0;
 	for(i=0; i<(int)strlen(cmd); i++)
 	{
-		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ' || cmd[i] == '\n') {shift(cmd, i); i--; }
+		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ' || cmd[i] == '\n')
+		{
+			shift(cmd, i);
+			i-- ;
+		}
+		else if(cmd[i] == ',') virgule=1;
+	}
+	if(virgule == 0)
+	{
+		printf("					erreur argument");
+		return NULL;
 	}
 	matrice * m1; matrice * m2;
 	char ** tab;
@@ -163,6 +173,8 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 			return multiplication(m1, m2);
 		else if(fct == 2)
 			return addition(m1, m2);
+		else if(fct == 3)
+			return soustraction(m1, m2);
 	}
 	else
 		printf("					erreur paramètre\n");
@@ -224,6 +236,8 @@ int main(int argc, char **argv)
 							 fct = 1;
 						 else if(strncmp(tab[1], "addition(", 9) == 0)
 						 	 fct = 2;
+						 else if(strncmp(tab[1], "sub(", 4) == 0)
+						 	 fct = 3;
 						 if(fct > 0)
 							 ptr_mat_tmp= fonction(tab[1], ct, fct);
 						 if(fct != 0 && ptr_mat_tmp != NULL)
@@ -272,6 +286,8 @@ int main(int argc, char **argv)
 					 	 fct = 1;
 					 else if(strncmp(tab[0], "addition(", 9) == 0)
 						 fct = 2;
+					 else if(strncmp(tab[0], "sub(", 4) == 0)
+							fct = 3;
 					 else
 					 {
 						 float * tmp= malloc(sizeof(float));
