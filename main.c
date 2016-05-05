@@ -56,7 +56,7 @@ void free_context(contexte * ct)
 	for(i=0; i<ct->longueurm; i++)
 	{
 		free(ct->tab_mat[i]->nom);
-		//free matrice
+		libereMatrice(ct->tab_mat[i]->pointeur);
 		free(ct->tab_mat[i]);
 	}
 	free(ct->tab_mat);
@@ -101,7 +101,6 @@ int recherche_flo(char * nom_rech, contexte * c, float* res)
 	}
 	return 0;
 }
-
 
 pmatrice matrix(char * cmd, contexte * ct)
 {
@@ -153,6 +152,38 @@ pmatrice matrix(char * cmd, contexte * ct)
 	free(res_f);
 	free(res);
 	return mat;
+}
+
+float fonction_f(char * cmd, contexte * ct, int fct, float * res)
+{
+	int i; int lg= strlen(cmd); int parenthese=0; int fin=0;
+	for(i=0; i < lg; i++)
+	{
+		if(fin == 1) {shift(cmd, i); i--; lg--;}
+		else if(cmd[i] == '(') {parenthese ++; shift(cmd, i); i--; lg--;}
+		else if(parenthese == 0){shift(cmd, i); i--; lg--;}
+		else if(cmd[i] == ')') {parenthese --; fin = 1; shift(cmd, i); i--;lg--;}
+		else if(cmd[i] == ' ') {shift(cmd, i); i--;lg--;}
+	}
+	matrice * m1;
+	printf("%s\n", cmd);
+	if(strncmp(cmd, "matrix", 6) == 0)
+		m1=matrix(cmd, ct);
+	else
+		m1= recherche_mat(cmd, ct);
+	if(m1 != NULL)
+	{
+		if(fct == 20)
+		{
+			*res= determinant(m1);
+		}
+		else if(fct == 21)
+		{
+			*res= rang(m1);
+		}
+		return 0;
+	}
+	return -1;
 }
 
 pmatrice fonction(char * cmd, contexte * ct, int fct)
@@ -251,8 +282,8 @@ int main(int argc, char **argv)
        line=NULL;
        while (getline(&line, &n, f_in)!=1)
        {
-         if(strcmp(line, "quit\n") == 0){exit(0);}
 				 printf("> %s\n", line);
+				 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); exit(0);}
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
 				 char ** tab= separe(line, ":");
@@ -289,8 +320,14 @@ int main(int argc, char **argv)
   				  		fct = 11;
   					 else if(strncmp(tab[1], "invert(", 7) == 0)
   	 				  	fct = 12;
-						 if(fct > 0)
+						 else if(strncmp(tab[1], "determinant(", 12) == 0)
+						 	 fct= 20;
+						 else if(strncmp(tab[1], "rang(", 5) == 0)
+					  		fct= 21;
+						 if(fct > 0 && fct < 20)
+						 {
 							 ptr_mat_tmp= fonction(tab[1], ct, fct);
+						 }
 						 if(fct != 0 && ptr_mat_tmp != NULL)
 						 {
 							 afficheMatrice(ptr_mat_tmp);
@@ -301,6 +338,21 @@ int main(int argc, char **argv)
 							 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
 							 m->pointeur= ptr_mat_tmp;
 							 ct->tab_mat[ct->longueurm-1]= m;
+						 }
+						 else if(fct > 19)
+						 {
+							 float res;
+							 if(fonction_f(tab[0], ct, fct, &res) == 0)
+							 {
+								 printf("					%.20g\n", res);
+								 flo f= malloc(sizeof(flo));
+								 f->nom= malloc(strlen(tab[0])+1 );
+								 strcpy(f->nom, tab[0]);
+								 f->val= res;
+								 ct->longueurf++;
+								 ct->tab_flo= realloc(ct->tab_flo, ct->longueurf*sizeof(flo));
+								 ct->tab_flo[ct->longueurf-1]= f;
+							 }
 						 }
 						 else if(fct == 0)
 						 	printf("					cmd not found\n");
@@ -328,7 +380,7 @@ int main(int argc, char **argv)
 						 if(m!=NULL)
 						 {
 							 afficheMatrice(m);
-							 // free la matrice
+							 libereMatrice(m);
 						 }
 					 }
 					 else if(strncmp(tab[0], "mult(", 5) == 0)
@@ -347,6 +399,10 @@ int main(int argc, char **argv)
 				  		fct = 11;
 					 else if(strncmp(tab[0], "invert(", 7) == 0)
 	 				  	fct = 12;
+					 else if(strncmp(tab[0], "determinant(", 12) == 0)
+				  		fct= 20;
+					 else if(strncmp(tab[0], "rang(", 5) == 0)
+				  		fct= 21;
 					 else
 					 {
 						 float * tmp= malloc(sizeof(float));
@@ -355,13 +411,21 @@ int main(int argc, char **argv)
 						 else printf("					cmd not found\n");
 						 free(tmp);
 					 }
-					 if(fct > 0)
+					 if(fct > 0 && fct < 20)
 					 {
 						 matrice * m= fonction(tab[0], ct, fct);
 						 if(m!=NULL)
 						 {
 							 afficheMatrice(m);
-							 // free la matrice
+							 libereMatrice(m);
+						 }
+					 }
+					 else if(fct > 19)
+					 {
+						 float res;
+						 if(fonction_f(tab[0], ct, fct, &res) == 0)
+						 {
+							 printf("					%.20g\n", res);
 						 }
 					 }
 				 }
