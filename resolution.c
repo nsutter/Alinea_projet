@@ -196,8 +196,8 @@ pmatrice inverse(pmatrice a)
     float f;
 
     pmatrice res = nouvelleMatrice(a->hauteur, a->largeur);
-    pmatrice identite = nouvelleMatrice(a->hauteur, a->largeur);
-    identite(identite);
+    pmatrice id = nouvelleMatrice(a->hauteur, a->largeur);
+    identite(id);
     pmatrice b = nouvelleMatrice(a->hauteur, 1);
 
     pmatrice x;
@@ -210,7 +210,7 @@ pmatrice inverse(pmatrice a)
         setElt(b, j, 0, f);
       }
 
-      x = solve(a, b);
+      x = resolutionGauss(a, b);
 
       for(j = 0; j < a->hauteur; j++)
       {

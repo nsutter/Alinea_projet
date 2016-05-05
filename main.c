@@ -174,6 +174,7 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 		return NULL;
 	}
 	matrice * m1; matrice * m2;
+	float f1;
 	char ** tab;
 	tab= separe(cmd, ",");
 	if(strncmp(tab[0], "matrix", 6) == 0)
