@@ -324,7 +324,7 @@ void speedtest(int f, int debut, int fin, int pas, int s)
 {
   if(f == 1 || f == 2 || f == 3)
   {
-    int i, r;
+    int i, r, fd = open("gnuplot.data", O_RDWR | O_CREAT | O_TRUNC, 0666);
 
     struct timeval tv;
     struct timeval tv2;
@@ -335,7 +335,7 @@ void speedtest(int f, int debut, int fin, int pas, int s)
     sa.sa_handler = handlerSpeedtest;
     sigemptyset(&sa.sa_mask);
 
-    if(sigaction(SIGALRM, &sa, NULL) != -1);
+    sigaction(SIGALRM, &sa, NULL);
 
     for(i = debut; i <= fin && flag_s; i += pas)
     {
@@ -374,6 +374,7 @@ void speedtest(int f, int debut, int fin, int pas, int s)
             multiplication(a, b);
           }
           break;
+          exit(1);
 
         default:
 
@@ -385,16 +386,34 @@ void speedtest(int f, int debut, int fin, int pas, int s)
 
       if(!WIFSIGNALED(r))
       {
-        //ecrire
-      }
+        temps = tv2.tv_sec - tv.tv_sec;
 
-      printf("Temps écoulé : %ld secondes et %ld microsecondes",tv2.tv_sec - tv.tv_sec,tv2.tv_usec - tv.tv_usec);
+        write(fd, i, sizeof(i));
+        write(fd, ' ', 1);
+        write(fd, temps, sizeof(temps));
+        write(fd, '\n', 1)
+      }
 
       free(a);
       free(b);
     }
 
-    // gnupllot
+    // on affiche maintenant un graphique avec gnuplot
+
+    FILE *gp;
+
+    gp = popen(GNUPLOT_PATH, "w");
+
+    if(gp == NULL)
+    {
+        fprintf(stderr, "Oops, I can't find %s.", GNUPLOT_PATH);
+        exit(1);
+    }
+
+    fprintf(gp, "load \"config\"\n");
+    fflush(gp);
+    getchar();
+    pclose(gp);
 
   }
   else
