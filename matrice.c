@@ -227,6 +227,56 @@ void afficheMatrice(pmatrice m)
   }
 }
 
+pmatrice exponentielle(pmatrice M, int n)
+{
+  int i;
+
+  pmatrice a = nouvelleMatrice(M->hauteur, M->largeur);
+
+  if(n < 0)
+  {
+    return NULL;
+  }
+  else if(n == 0)
+  {
+    identite(a);
+
+    return a;
+  }
+  else if(n == 1)
+  {
+    a = copieMatrice(M);
+
+    return a;
+  }
+  else
+  {
+    a = copieMatrice(M);
+
+    pmatrice * tab = malloc(n * sizeof(pmatrice)); // tableau des pointeurs à supprimer à la fin
+
+    for(i = 1; i < n; i++)
+    {
+      a = multiplication(a, M);
+
+      if(i < n - 1)
+      {
+        tab[i] = a;
+      }
+
+    }
+
+    for(i = 1; i < n - 1; i++)
+    {
+      libereMatrice(tab[i]);
+    }
+
+    free(tab);
+
+    return a;
+  }
+}
+
 void libereMatrice(pmatrice a)
 {
   int i;

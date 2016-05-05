@@ -28,6 +28,7 @@ float produit(pmatrice m1, pmatrice m2, int a, int b);
 pmatrice multiplication(pmatrice m1, pmatrice m2);
 pmatrice multiplication_scal(pmatrice M, float valeur);
 pmatrice transposition(pmatrice M);
+pmatrice exponentielle(pmatrice M, int n);
 
 void libereMatrice(pmatrice m);
 
