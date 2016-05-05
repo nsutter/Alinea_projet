@@ -1,0 +1,11 @@
+m1 : matrix([11,2, 3], [3,-4, 5])
+a : 5
+b: 9
+m2 : matrix([11,a, 3], [3,4, 5])
+m3 : matrix([11,a], [3,4], [2, b])
+mult(m1, m2)
+m4: mult(m1, m3)
+addition(m2, m3)
+m4: addition(m1, m2)
+m5: sub(m4, m1)
+sub(m4, m5)
