@@ -1,7 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "matrice.h"
+
+#define GNUPLOT_PATH "/usr/bin/gnuplot"
+
+pid_t pid;
+
+int flag_s = 1;
 
 float getElt(pmatrice m, int i, int j)
 {
@@ -303,34 +312,107 @@ void genereMatrice(pmatrice m)
   }
 }
 
-void speedtest(int debut, int fin, int pas, int s)
+void handlerSpeedtest()
 {
-  int i;
+  kill(pid, 9);
+  flag_s = 0;
+}
 
-  struct timeval tv;
-  struct timeval tv2;
-
-  pmatrice a, b;
-
-  for(i = debut; i <= fin; i += pas)
+// -1 = pas d'attente avec s
+void speedtest(int f, int debut, int fin, int pas, int s)
+{
+  if(f == 1 || f == 2 || f == 3)
   {
-    a = nouvelleMatrice(i, i);
-    genereMatrice(a);
+    int i, r;
 
-    b = nouvelleMatrice(i, i);
-    genereMatrice(b);
+    struct timeval tv;
+    struct timeval tv2;
 
-    alarm(s);
+    pmatrice a, b;
 
-    gettimeofday(&tv,NULL); // début du temps
+    struct sigaction sa;
+    sa.sa_handler = handlerSpeedtest;
+    sigemptyset(&sa.sa_mask);
 
-    // appel de la fonction
+    if(sigaction(SIGALRM, &sa, NULL) != -1);
 
-    gettimeofday(&tv2,NULL); // fin du temps
+    for(i = debut; i <= fin && flag_s; i += pas)
+    {
+      a = nouvelleMatrice(i, i);
+      genereMatrice(a);
 
-    printf("Temps écoulé : %ld secondes et %ld microsecondes",tv2.tv_sec - tv.tv_sec,tv2.tv_usec - tv.tv_usec);
+      b = nouvelleMatrice(i, i);
+      genereMatrice(b);
 
-    free(a);
-    free(b);
+      alarm(s);
+
+      gettimeofday(&tv,NULL); // début du temps
+
+      // appel de la fonction f
+      pid = fork();
+
+      switch (pid)
+      {
+        case -1:
+
+          exit(1);
+          break;
+
+        case 0:
+
+          if(f == 2)
+          {
+            addition(a, b);
+          }
+          else if(f == 3)
+          {
+            soustraction(a, b);
+          }
+          else if(f == 1)
+          {
+            multiplication(a, b);
+          }
+          break;
+
+        default:
+
+          wait(&r);
+          break;
+      }
+
+      gettimeofday(&tv2,NULL); // fin du temps
+
+      if(!WIFSIGNALED(r))
+      {
+        //ecrire
+      }
+
+      printf("Temps écoulé : %ld secondes et %ld microsecondes",tv2.tv_sec - tv.tv_sec,tv2.tv_usec - tv.tv_usec);
+
+      free(a);
+      free(b);
+    }
+
+    // gnupllot
+
+    FILE *gp;
+
+    gp = popen(GNUPLOT_PATH, "w");
+
+    if(gp == NULL)
+    {
+        fprintf(stderr, "Oops, I can't find %s.", GNUPLOT_PATH);
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(gp, "load \"gnuplot_d\"\n");
+    fflush(gp);
+    getchar();
+    pclose(gp);
+
+  }
+  else
+  {
+    printf("commande inccorecte pour le speedtest\n");
   }
 }

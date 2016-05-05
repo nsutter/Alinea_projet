@@ -1,0 +1,10 @@
+set terminal X11
+set size 0.8,0.8
+set nokey
+ 
+set xrange [-0.1:10]
+#set yrange [0:110]
+M=3
+k=3
+plot (1-exp(-k*x))
+pause -1 "Faire retour"
