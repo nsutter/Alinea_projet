@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -324,10 +325,14 @@ void speedtest(int f, int debut, int fin, int pas, int s)
 {
   if(f == 1 || f == 2 || f == 3)
   {
-    int i, r, fd = open("gnuplot.data", O_RDWR | O_CREAT | O_TRUNC, 0666);
+    int i, raison;
+
+    FILE * gnuplot_data = fopen("gnuplot_data", "w+");
 
     struct timeval tv;
     struct timeval tv2;
+
+    char c1 = ' ', c2 = '\n';
 
     pmatrice a, b;
 
@@ -347,7 +352,7 @@ void speedtest(int f, int debut, int fin, int pas, int s)
 
       alarm(s);
 
-      gettimeofday(&tv,NULL); // début du temps
+      gettimeofday(&tv, NULL); // début du temps
 
       // appel de la fonction f
       pid = fork();
@@ -373,25 +378,20 @@ void speedtest(int f, int debut, int fin, int pas, int s)
           {
             multiplication(a, b);
           }
-          break;
-          exit(1);
+
+          exit(2);
 
         default:
 
-          wait(&r);
+          wait(&raison);
           break;
       }
 
-      gettimeofday(&tv2,NULL); // fin du temps
+      gettimeofday(&tv2, NULL); // fin du temps
 
-      if(!WIFSIGNALED(r))
+      if(WIFEXITED(raison))
       {
-        temps = tv2.tv_sec - tv.tv_sec;
-
-        write(fd, i, sizeof(i));
-        write(fd, ' ', 1);
-        write(fd, temps, sizeof(temps));
-        write(fd, '\n', 1)
+        fprintf(gnuplot_data, "%d %ld\n", i, (long int)(tv2.tv_usec - tv.tv_usec));
       }
 
       free(a);
@@ -420,4 +420,9 @@ void speedtest(int f, int debut, int fin, int pas, int s)
   {
     printf("commande inccorecte pour le speedtest\n");
   }
+}
+
+int main()
+{
+  speedtest(1, 5, 50, 5, 100);
 }
