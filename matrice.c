@@ -253,20 +253,19 @@ pmatrice exponentielle(pmatrice M, int n)
   {
     a = copieMatrice(M);
 
-    pmatrice * tab = malloc(n * sizeof(pmatrice)); // tableau des pointeurs à supprimer à la fin
+    pmatrice * tab = malloc((n - 1) * sizeof(pmatrice)); // tableau des pointeurs à supprimer à la fin
 
     for(i = 1; i < n; i++)
     {
-      a = multiplication(a, M);
-
-      if(i < n - 1)
+      if(i < n)
       {
-        tab[i] = a;
+        tab[i - 1] = a;
       }
 
+      a = multiplication(a, M);
     }
 
-    for(i = 1; i < n - 1; i++)
+    for(i = 0; i < n - 1; i++)
     {
       libereMatrice(tab[i]);
     }
