@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #include "matrice.h"
 
 #define GNUPLOT_PATH "/usr/bin/gnuplot"

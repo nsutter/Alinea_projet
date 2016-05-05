@@ -33,5 +33,7 @@ pmatrice expo(pmatrice M, int n);
 void libereMatrice(pmatrice m);
 
 void genereMatrice(pmatrice m);
+void handlerSpeedtest();
+void speedtest(int f, int debut, int fin, int pas, int s);
 
 #endif
