@@ -3,8 +3,8 @@
 
 typedef struct{int largeur; int hauteur; float ** tab;} *pmatrice, matrice;
 
-typedef struct{char * nom; matrice * pointeur;} *mat;
-typedef struct{char * nom; float val;} *flo;
+typedef struct{char * nom; matrice * pointeur;} *mat, sizemat;
+typedef struct{char * nom; float val;} *flo, sizeflo;
 
 typedef struct{mat * tab_mat; flo * tab_flo; int longueurm; int longueurf;} contexte;
 

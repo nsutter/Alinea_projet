@@ -166,7 +166,6 @@ float fonction_f(char * cmd, contexte * ct, int fct, float * res)
 		else if(cmd[i] == ' ') {shift(cmd, i); i--;lg--;}
 	}
 	matrice * m1;
-	printf("%s\n", cmd);
 	if(strncmp(cmd, "matrix", 6) == 0)
 		m1=matrix(cmd, ct);
 	else
@@ -282,7 +281,7 @@ int main(int argc, char **argv)
        line=NULL;
        while (getline(&line, &n, f_in)!=1)
        {
-				 printf("> %s\n", line);
+				//  printf("> %s\n", line);
 				 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); exit(0);}
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
@@ -331,8 +330,8 @@ int main(int argc, char **argv)
 						 if(fct != 0 && ptr_mat_tmp != NULL)
 						 {
 							 afficheMatrice(ptr_mat_tmp);
-							 mat m= malloc(sizeof(mat));
-							 m->nom= malloc(strlen(tab[0]));
+							 mat m= malloc(sizeof(sizemat));
+							 m->nom= malloc((int)strlen(tab[0])+1);
 							 strcpy(m->nom, tab[0]);
 							 ct->longueurm++;
 							 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
@@ -345,8 +344,8 @@ int main(int argc, char **argv)
 							 if(fonction_f(tab[0], ct, fct, &res) == 0)
 							 {
 								 printf("					%.20g\n", res);
-								 flo f= malloc(sizeof(flo));
-								 f->nom= malloc(strlen(tab[0])+1 );
+								 flo f= malloc(sizeof(sizeflo));
+								 f->nom= malloc((int)strlen(tab[0])+1 );
 								 strcpy(f->nom, tab[0]);
 								 f->val= res;
 								 ct->longueurf++;
