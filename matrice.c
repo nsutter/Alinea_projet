@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "matrice.h"
 
 float getElt(pmatrice m, int i, int j)
@@ -287,4 +288,49 @@ void libereMatrice(pmatrice a)
 
   free(a->tab);
   free(a);
+}
+
+void genereMatrice(pmatrice m)
+{
+  int i, j, min = 0, max = 99;
+
+  for(i = 0; i < m->hauteur; i++)
+  {
+    for(j = 0; j < m->largeur; j++)
+    {
+      setElt(m, i, j, rand()%(max-min) + min);
+    }
+  }
+}
+
+void speedtest(int debut, int fin, int pas, int s)
+{
+  int i;
+
+  struct timeval tv;
+  struct timeval tv2;
+
+  pmatrice a, b;
+
+  for(i = debut; i <= fin; i += pas)
+  {
+    a = nouvelleMatrice(i, i);
+    genereMatrice(a);
+
+    b = nouvelleMatrice(i, i);
+    genereMatrice(b);
+
+    alarm(s);
+
+    gettimeofday(&tv,NULL); // début du temps
+
+    // appel de la fonction
+
+    gettimeofday(&tv2,NULL); // fin du temps
+
+    printf("Temps écoulé : %ld secondes et %ld microsecondes",tv2.tv_sec - tv.tv_sec,tv2.tv_usec - tv.tv_usec);
+
+    free(a);
+    free(b);
+  }
 }

@@ -32,4 +32,6 @@ pmatrice exponentielle(pmatrice M, int n);
 
 void libereMatrice(pmatrice m);
 
+void genereMatrice(pmatrice m);
+
 #endif
