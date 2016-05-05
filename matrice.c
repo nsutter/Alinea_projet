@@ -33,7 +33,7 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
 
 pmatrice copieMatrice(pmatrice a)
 {
-  pmatrice b = nouvelleMatrice(a->hauteur, a->largeur)
+  pmatrice b = nouvelleMatrice(a->hauteur, a->largeur);
 
   int i, j;
 
