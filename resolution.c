@@ -86,9 +86,6 @@ void triangulaireMatrice(pmatrice a, pmatrice b)
       v = -(getElt(a, j, i) / getElt(a, i, i));
       additionMultiple(a, b, j, i, v);
     }
-
-    displayMatrix(a);
-    displayMatrix(b);
   }
 }
 
@@ -113,23 +110,30 @@ float triangulaireDeterminant(pmatrice a)
     int i, j;
     float v = 1;
 
+    pmatrice b = nouvelleMatrice(a->hauteur, 1);
+
+    for(i = 0; i < b->hauteur; i++)
+    {
+      setElt(b, i, 0, 0);
+    }
+
     for(i = 0; i < a->hauteur - 1; i++)
     {
       j = choixPivotPartiel(a, i);
 
       if(j != i)
       {
-        echangeLigne(a, i, j);
+        echangeLigne(a, b, i, j);
         v = -v;
       }
 
       for(j = i + 1; j < a->hauteur; j++)
       {
-        additionMultiple(a, j, i, -getElt(a, j, i) / getElt(a, i, i));
+        additionMultiple(a, b, j, i, -getElt(a, j, i) / getElt(a, i, i));
       }
     }
 
-  return c;
+  return v;
 }
 
 float determinant(pmatrice a)
@@ -152,11 +156,18 @@ float determinant(pmatrice a)
 
 int rang(pmatrice a)
 {
+  int i, j, rang, flag;
+
   pmatrice b = copieMatrice(a);
 
-  triangulaireMatrice(b);
+  pmatrice c = nouvelleMatrice(a->hauteur, 1);
 
-  int i, j, rang, flag;
+  for(i = 0; i < c->hauteur; i++)
+  {
+    setElt(c, i, 0, 0);
+  }
+
+  triangulaireMatrice(b, c);
 
   for(i = 0; i < a->hauteur; i++)
   {
