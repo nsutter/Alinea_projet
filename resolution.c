@@ -176,3 +176,42 @@ int rang(pmatrice a)
 
   return rang;
 }
+
+pmatrice inverse(pmatrice a)
+{
+  if(determinant(a) != 0)
+  {
+    int i, j;
+    float f;
+
+    pmatrice res = nouvelleMatrice(a->hauteur, a->largeur);
+    pmatrice identite = nouvelleMatrice(a->hauteur, a->largeur);
+    identite(identite);
+    pmatrice b = nouvelleMatrice(a->hauteur, 1);
+
+    pmatrice x;
+
+    for(i = 0; i < a->largeur; i++)
+    {
+      for(j = 0; j < a->largeur; j++)
+      {
+        f = getElt(id, j, i);
+        setElt(b, j, 0, f);
+      }
+
+      x = solve(a, b);
+
+      for(j = 0; j < a->hauteur; j++)
+      {
+        f = getElt(x, j, 0);
+        setElt(res, j, i, f);
+      }
+
+      free(x);
+    }
+
+    return res;
+  }
+
+  return NULL;
+}

@@ -15,4 +15,6 @@ float determinant(pmatrice a);
 
 int rang(pmatrice a);
 
+pmatrice inverse(pmatrice a);
+
 #endif
