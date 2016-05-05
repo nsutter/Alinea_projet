@@ -228,7 +228,7 @@ void afficheMatrice(pmatrice m)
   }
 }
 
-pmatrice exponentielle(pmatrice M, int n)
+pmatrice expo(pmatrice M, int n)
 {
   int i;
 

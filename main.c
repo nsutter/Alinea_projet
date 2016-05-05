@@ -168,7 +168,8 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 		}
 		else if(cmd[i] == ',') virgule=1;
 	}
-	if(virgule == 0)
+
+	if((virgule == 0 && fct < 10) || (virgule != 0 && fct >10))
 	{
 		printf("					erreur argument");
 		return NULL;
@@ -182,12 +183,22 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 	else
 		m1= recherche_mat(tab[0], ct);
 
-	if(strncmp(tab[1], "matrix", 6) == 0)
-		m2=matrix(tab[1], ct);
-	else
-		m2= recherche_mat(tab[1], ct);
+	if(fct < 5)
+	{
+		if(strncmp(tab[1], "matrix", 6) == 0)
+			m2=matrix(tab[1], ct);
+		else
+			m2= recherche_mat(tab[1], ct);
+	}
+	else if(fct < 10)
+	{
+		if((tab[1][0] >= '0' && tab[1][0] <= '9') || tab[1][0] == '-' || tab[1][0] == '.')
+			f1=atoi(tab[1]);
+		else
+			if(recherche_flo(tab[1], ct, &f1) == 1){ printf("					erreur argument\n"); return NULL;}
+	}
 
-	if(m1 != NULL && m2 != NULL)
+	if(m1 != NULL && (fct >5 || m2 != NULL))
 	{
 		if(fct == 1)
 			return multiplication(m1, m2);
@@ -197,6 +208,14 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 			return soustraction(m1, m2);
 		else if(fct == 4)
 			return resolutionGauss(m1, m2);
+		else if(fct == 5)
+			return multiplication_scal(m1, f1);
+		else if(fct == 6)
+			return expo(m1, (int)f1);
+		else if(fct == 11)
+			return transposition(m1);
+		else if(fct == 12)
+			return inverse(m1);
 	}
 	else
 		printf("					erreur paramètre\n");
@@ -233,7 +252,7 @@ int main(int argc, char **argv)
        while (getline(&line, &n, f_in)!=1)
        {
          if(strcmp(line, "quit\n") == 0){exit(0);}
-				 printf("Ligne : %s\n", line);
+				 printf("> %s\n", line);
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
 				 char ** tab= separe(line, ":");
@@ -262,7 +281,15 @@ int main(int argc, char **argv)
 						 	 fct = 3;
 						 else if(strncmp(tab[1], "solve(", 6) == 0)
 						 	 fct = 4;
-						 if(fct > 0 && fct < 5)
+						 else if(strncmp(tab[1], "mult_scal(", 10) == 0)
+  						  fct = 5;
+  				 	 else if(strncmp(tab[1], "expo(", 5) == 0)
+  						  fct = 6;
+  					 else if(strncmp(tab[1], "transpose(", 10) == 0)
+  				  		fct = 11;
+  					 else if(strncmp(tab[1], "invert(", 7) == 0)
+  	 				  	fct = 12;
+						 if(fct > 0)
 							 ptr_mat_tmp= fonction(tab[1], ct, fct);
 						 if(fct != 0 && ptr_mat_tmp != NULL)
 						 {
@@ -277,7 +304,6 @@ int main(int argc, char **argv)
 						 }
 						 else if(fct == 0)
 						 	printf("					cmd not found\n");
-						 else printf("					erreur\n");
 					 }
 					 else
 					 {
@@ -304,8 +330,6 @@ int main(int argc, char **argv)
 							 afficheMatrice(m);
 							 // free la matrice
 						 }
-						 else
-							printf("					erreur");
 					 }
 					 else if(strncmp(tab[0], "mult(", 5) == 0)
 					 	 fct = 1;
@@ -313,8 +337,16 @@ int main(int argc, char **argv)
 						 fct = 2;
 					 else if(strncmp(tab[0], "sub(", 4) == 0)
 							fct = 3;
-					 else if(strncmp(tab[1], "solve(", 6) == 0)
+					 else if(strncmp(tab[0], "solve(", 6) == 0)
 				 		  fct = 4;
+					 else if(strncmp(tab[0], "mult_scal(", 10) == 0)
+						  fct = 5;
+				 	 else if(strncmp(tab[0], "expo(", 5) == 0)
+						  fct = 6;
+					 else if(strncmp(tab[0], "transpose(", 10) == 0)
+				  		fct = 11;
+					 else if(strncmp(tab[0], "invert(", 7) == 0)
+	 				  	fct = 12;
 					 else
 					 {
 						 float * tmp= malloc(sizeof(float));
@@ -323,7 +355,7 @@ int main(int argc, char **argv)
 						 else printf("					cmd not found\n");
 						 free(tmp);
 					 }
-					 if(fct > 0 && fct < 5)
+					 if(fct > 0)
 					 {
 						 matrice * m= fonction(tab[0], ct, fct);
 						 if(m!=NULL)
@@ -331,7 +363,6 @@ int main(int argc, char **argv)
 							 afficheMatrice(m);
 							 // free la matrice
 						 }
-						 else printf("					erreur\n");
 					 }
 				 }
 				 free(tab);
