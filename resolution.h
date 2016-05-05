@@ -17,4 +17,6 @@ int rang(pmatrice a);
 
 pmatrice inverse(pmatrice a);
 
+float maximumAbsolue(pmatrice a);
+
 #endif

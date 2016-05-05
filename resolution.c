@@ -226,3 +226,23 @@ pmatrice inverse(pmatrice a)
 
   return NULL;
 }
+
+float maximumAbsolue(pmatrice a)
+{
+  int i, j;
+
+  float max = -1;
+
+  for(i = 0; i < a->hauteur; i++)
+  {
+    for(j = 0; j < a->largeur; j++)
+    {
+      if(abs(getElt(a, i, j)) > max)
+      {
+        max = abs(getElt(a, i, j));
+      }
+    }
+  }
+
+  return max;
+}
