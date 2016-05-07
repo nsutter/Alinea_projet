@@ -486,6 +486,40 @@ int main(int argc, char **argv)
 				  		fct= 20;
 					 else if(strncmp(tab[0], "rang(", 5) == 0)
 				  		fct= 21;
+					 else if(strncmp(tab[0], "speedtest ", 10) ==0)
+					 {
+						 char ** speed_arg= separe(tab[0], " ");
+						 int i,j;
+						 int erreur= 0;
+						 for(i=0; speed_arg[i] != NULL; i++)
+						 {
+							 for(j=0; speed_arg[i][j] != '\0'; j++)
+							 {
+								 if(i > 1 && speed_arg[i][j] >= '0' && speed_arg[i][j] <= '9');
+								 else if(i>1)
+								 {
+									 printf("					erreur arguments\n");
+									 erreur = 1;
+								 }
+							 }
+						 }
+						 if(i < 4 && erreur == 0)
+						 		printf("					erreur nombre d'arguments\n");
+						 else if(erreur == 0)
+						 {
+							 int fct_speed=0;
+							 if(strcmp("addition", speed_arg[1]) == 0) fct_speed=2;
+							 else if(strcmp("sub", speed_arg[1]) == 0) fct_speed=3;
+							 else if(strcmp("mult", speed_arg[1]) == 0) fct_speed= 1;
+							 else
+							    printf("					commande en argument inconnue\n");
+							 if(fct_speed != 0 && i != 5)
+							 	 speedtest(fct_speed, atoi(speed_arg[2]), atoi(speed_arg[3]), atoi(speed_arg[4]), -1);
+							 else if(fct_speed != 0 && i == 5)
+							 	 speedtest(fct_speed, atoi(speed_arg[2]), atoi(speed_arg[3]), atoi(speed_arg[4]), atoi(speed_arg[5]));
+						 }
+						 free(speed_arg);
+					 }
 					 else
 					 {
 						 float * tmp= malloc(sizeof(float));
