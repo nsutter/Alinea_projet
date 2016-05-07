@@ -127,7 +127,7 @@ void triangulaireMatrice(pmatrice a, pmatrice b)
 */
 pmatrice resolutionGauss(pmatrice a, pmatrice b)
 {
-  if(a->hauteur == b->hauteur && b->largeur == 1)
+  if(determinant(a) != 0 && b->largeur == 1)
   {
     pmatrice c = copieMatrice(a);
     pmatrice d = copieMatrice(b);
@@ -347,6 +347,6 @@ int vecteurValeurPropre(pmatrice a, pmatrice b, float * f, int precision)
 
     multiplication_scal(b, (float)1 / *f);
   }
-  
+
   return 1;
 }
