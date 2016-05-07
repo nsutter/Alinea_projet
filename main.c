@@ -245,59 +245,75 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 	{
 		if(fct == 1)
 		{
+			matrice * res= multiplication(m1, m2);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
-			return multiplication(m1, m2);
+			return res;
 		}
 		else if(fct == 2)
 		{
+			matrice * res= addition(m1, m2);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
-			return addition(m1, m2);
+			return res;
 		}
 		else if(fct == 3)
 		{
+			matrice * res= soustraction(m1, m2);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
-			return soustraction(m1, m2);
+			return res;
 		}
 		else if(fct == 4)
 		{
+			matrice * res= resolutionGauss(m1, m2);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
-			return resolutionGauss(m1, m2);
+			return res;
 		}
 		else if(fct == 5)
 		{
+			matrice * res= multiplication_scal(m1, f1);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
-			return multiplication_scal(m1, f1);
+			return res;
 		}
 		else if(fct == 6)
 		{
+			matrice * res= expo(m1, (int)f1);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
-			return expo(m1, (int)f1);
+			return res;
 		}
 		else if(fct == 11)
 		{
+			matrice * res= transposition(m1);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
-			return transposition(m1);
+			return res;
 		}
 		else if(fct == 12)
 		{
+			matrice * res= inverse(m1);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
-			return inverse(m1);
+			return res;
+		}
+		else if(fct == 13)
+		{
+			matrice * res= moindreCarre(m1);
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
+			return res;
 		}
 	}
 	else
@@ -377,6 +393,8 @@ int main(int argc, char **argv)
   				  		fct = 11;
   					 else if(strncmp(tab[1], "invert(", 7) == 0)
   	 				  	fct = 12;
+						 else if(strncmp(tab[1], "mcarre(", 7) == 0)
+ 	 				    	fct = 13;
 						 else if(strncmp(tab[1], "determinant(", 12) == 0)
 						 	 fct= 20;
 						 else if(strncmp(tab[1], "rang(", 5) == 0)
@@ -542,6 +560,8 @@ int main(int argc, char **argv)
 				  		fct = 11;
 					 else if(strncmp(tab[0], "invert(", 7) == 0)
 	 				  	fct = 12;
+				   else if(strncmp(tab[0], "mcarre(", 7) == 0)
+							fct = 12;
 					 else if(strncmp(tab[0], "determinant(", 12) == 0)
 				  		fct= 20;
 					 else if(strncmp(tab[0], "rang(", 5) == 0)
@@ -602,8 +622,8 @@ int main(int argc, char **argv)
 
 							 if(m2 != NULL)
 							 {
-								 afficheMatrice(m2);
 								 printf("					valeure propre: %.20g\n", res);
+								 afficheMatrice(m2);
 								 libereMatrice(m2);
 							 }
 							 else
