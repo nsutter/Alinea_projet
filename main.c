@@ -383,6 +383,7 @@ int main(int argc, char **argv)
 											{
 												ct->tab_mat[i]= ct->tab_mat[i+1];
 											}
+											longueurm--;
 											free(ct->tab_mat[i+1]);
 											break;
 										}
