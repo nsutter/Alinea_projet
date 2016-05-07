@@ -1,5 +1,0 @@
-set terminal X11
-set title ' Temps par taille de matrice '
-set xlabel ' Taille de la matrice n*n'
-set ylabel ' Temps (microseconde)'
-plot "gnuplot_data" using 1:2

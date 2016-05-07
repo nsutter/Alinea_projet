@@ -519,39 +519,24 @@ void speedtest(int f, int debut, int fin, int pas, int s)
 
     if(gp == NULL)
     {
-        fprintf(stderr, "Oops, I can't find %s.", GNUPLOT_PATH);
+        fprintf(stderr, "Erreur 404 : %s.", GNUPLOT_PATH);
         exit(1);
     }
 
-    fprintf(gp, "load \"config\"\n");
+    fprintf(gp, "set terminal X11\n");
+    fprintf(gp, "set title 'Temps en fonction de la taille de la matrice n * n'\n");
+    fprintf(gp, "set xlabel 'Taille de la matrice n * n'\n");
+    fprintf(gp, "set ylabel 'Temps (microseconde)'\n");
+    fprintf(gp, "plot 'gnuplot_data' using 1:2\n");
     fflush(gp);
+    printf("[ENTER] dans le terminal pour quitter le graphique");
     getchar();
     pclose(gp);
+
+    fclose(gnuplot_data);
   }
   else
   {
     printf("          commande incorrecte pour le speedtest\n");
   }
 }
-
-// int main()
-// {
-//   pmatrice res;
-//
-//   float f;
-//
-//   pmatrice a = nouvelleMatrice(2, 2);
-//
-//   setElt(a, 0, 0, 5);
-//   setElt(a, 0, 1, -3);
-//   setElt(a, 1, 0, 6);
-//   setElt(a, 1, 1, -4);
-//
-//   vecteurValeurPropre(a, res, &f, 50);
-//
-//   printf("----------\n");
-//
-//   afficheMatrice(res);
-//
-//   printf("f = %f\n", f);
-// }

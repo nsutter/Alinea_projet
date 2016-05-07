@@ -17,6 +17,8 @@ int rang(pmatrice a);
 
 pmatrice inverse(pmatrice a);
 
+pmatrice moindreCarre(pmatrice m);
+
 float maximumAbsolue(pmatrice a);
 
 int vecteurValeurPropre(pmatrice a, pmatrice b, float * f, int precision);
