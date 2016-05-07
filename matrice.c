@@ -66,8 +66,6 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
     }
   }
 
-
-
   return m;
 }
 
