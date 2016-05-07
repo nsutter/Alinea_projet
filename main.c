@@ -442,7 +442,7 @@ int main(int argc, char **argv)
 						 }
 						 if(ok == 0)
 						 {
-							 flo f= malloc(sizeof(flo));
+							 flo f= malloc(sizeof(sizeflo));
 							 f->nom= malloc(strlen(tab[0])+1 );
 							 strcpy(f->nom, tab[0]);
 							 f->val= atof(tab[1]);
