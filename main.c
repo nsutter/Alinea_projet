@@ -340,6 +340,7 @@ int main(int argc, char **argv)
 							 {
 						  		if(strcmp(ct->tab_mat[i]->nom, tab[0]) == 0)
 									{
+										libereMatrice(ct->tab_mat[i]->pointeur);
 										ct->tab_mat[i]->pointeur= ptr_mat_tmp;
 										ok = 1;
 									}
