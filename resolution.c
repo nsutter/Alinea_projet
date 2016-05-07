@@ -199,7 +199,7 @@ pmatrice inverse(pmatrice a)
 
     pmatrice id = nouvelleMatrice(a->hauteur, a->largeur);
     identite(id);
-    
+
     pmatrice b = nouvelleMatrice(a->hauteur, 1);
 
     pmatrice x;
@@ -247,4 +247,37 @@ float maximumAbsolue(pmatrice a)
   }
 
   return max;
+}
+
+// b et f modifié par effet de bord, b une matrice juste initialisé
+int vecteurValeurPropre(pmatrice a, pmatrice b, float * f, int precision)
+{
+  int i;
+
+  b = nouvelleMatrice(a->hauteur, 1);
+
+  for(i = 0; i < b->hauteur; i++)
+  {
+    setElt(b, i, 0, 1);
+  }
+
+  for(i = 0; i < precision; i++)
+  {
+    printf("----------\n");
+    afficheMatrice(a);
+    afficheMatrice(b);
+
+    b = multiplication(a, b);
+
+    afficheMatrice(b);
+
+    *f = maximumAbsolue(b);
+    printf("maximumAbsolue(b) = %f\n", *f);
+
+    multiplication_scal(b, (float)1 / *f);
+  }
+
+  afficheMatrice(b);
+
+  return 1;
 }

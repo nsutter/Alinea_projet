@@ -8,12 +8,16 @@
 #include <sys/time.h>
 #include "matrice.h"
 
-#define GNUPLOT_PATH "/usr/bin/gnuplot"
+#define GNUPLOT_PATH "/usr/bin/gnuplot" // chemin d'accès vers gnuplot
 
 pid_t pid;
 
 int flag_s = 1;
 
+/* @brief Récupèration d'un élément d'une matrice
+ *
+ *
+*/
 float getElt(pmatrice m, int i, int j)
 {
   return m->tab[i][j];
@@ -303,7 +307,7 @@ void libereMatrice(pmatrice a)
 
 void genereMatrice(pmatrice m)
 {
-  int i, j, min = 0, max = 99;
+  int i, j, min = -99, max = 99;
 
   for(i = 0; i < m->hauteur; i++)
   {
@@ -422,7 +426,24 @@ void speedtest(int f, int debut, int fin, int pas, int s)
   }
 }
 
-int main()
-{
-  speedtest(1, 5, 50, 5, 100);
-}
+// int main()
+// {
+//   pmatrice res;
+//
+//   float f;
+//
+//   pmatrice a = nouvelleMatrice(2, 2);
+//
+//   setElt(a, 0, 0, 5);
+//   setElt(a, 0, 1, -3);
+//   setElt(a, 1, 0, 6);
+//   setElt(a, 1, 1, -4);
+//
+//   vecteurValeurPropre(a, res, &f, 50);
+//
+//   printf("----------\n");
+//
+//   afficheMatrice(res);
+//
+//   printf("f = %f\n", f);
+// }

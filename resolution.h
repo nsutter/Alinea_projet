@@ -19,4 +19,6 @@ pmatrice inverse(pmatrice a);
 
 float maximumAbsolue(pmatrice a);
 
+int vecteurValeurPropre(pmatrice a, pmatrice b, float * f, int precision);
+
 #endif
