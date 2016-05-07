@@ -556,5 +556,6 @@ int main(int argc, char **argv)
        }
     }
 	 free_context(ct);
+	 fclose(f_in);
    return 0;
 }
