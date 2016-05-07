@@ -580,28 +580,35 @@ int main(int argc, char **argv)
 						 }
 						 free(speed_arg);
 					 }
-					 else if(strncmp(tab[0], "vp(", 3))
+					 else if(strncmp(tab[0], "vp(", 3) == 0)
 					 {
-						 char** vp_arg= separe(tab[0], "(");
+						 char** vp_arg_int= separe(tab[0], "(");
+						 char** vp_arg= separe(vp_arg_int[1], ")");
+						 free(vp_arg_int);
 						 matrice * m1; matrice * m2; float res;
 						 int alloue_mat=0;
-					 	 if(strncmp(tab[1], "matrix", 6) == 0)
+					 	 if(strncmp(vp_arg[0], "matrix", 6) == 0)
 						 {
 							 alloue_mat =1;
-							 m1=matrix(vp_arg[1], ct);
+							 m1=matrix(vp_arg[0], ct);
 						 }
 						 else
-					 		 m1= recherche_mat(vp_arg[1], ct);
+					 		 m1= recherche_mat(vp_arg[0], ct);
+						 printf("%s\n", vp_arg[0]);
 						 if(m1 == NULL)
 						 	 printf("					erreur argument\n");
 						 else
 						 {
-							 vecteurValeurPropre(m1, m2, &res, 100);
-							 afficheMatrice(m2);
-							 printf("					valeure propre: %.20g\n", res);
+							 if(vecteurValeurPropre(m1, m2, &res, 100) != -1)
+							 {
+								 afficheMatrice(m2);
+								 printf("					valeure propre: %.20g\n", res);
+								 libereMatrice(m2);
+							 }
+							 else
+							 	 printf("						an error occured\n");
 						 }
 						 free(vp_arg);
-						 libereMatrice(m2);
 						 if(alloue_mat == 1) libereMatrice(m1);
 					 }
 					 else
