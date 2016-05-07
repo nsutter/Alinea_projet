@@ -196,8 +196,10 @@ pmatrice inverse(pmatrice a)
     float f;
 
     pmatrice res = nouvelleMatrice(a->hauteur, a->largeur);
+
     pmatrice id = nouvelleMatrice(a->hauteur, a->largeur);
     identite(id);
+    
     pmatrice b = nouvelleMatrice(a->hauteur, 1);
 
     pmatrice x;

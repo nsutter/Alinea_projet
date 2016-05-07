@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -324,10 +325,14 @@ void speedtest(int f, int debut, int fin, int pas, int s)
 {
   if(f == 1 || f == 2 || f == 3)
   {
-    int i, r;
+    int i, raison;
+
+    FILE * gnuplot_data = fopen("gnuplot_data", "w+");
 
     struct timeval tv;
     struct timeval tv2;
+
+    char c1 = ' ', c2 = '\n';
 
     pmatrice a, b;
 
@@ -335,7 +340,7 @@ void speedtest(int f, int debut, int fin, int pas, int s)
     sa.sa_handler = handlerSpeedtest;
     sigemptyset(&sa.sa_mask);
 
-    if(sigaction(SIGALRM, &sa, NULL) != -1);
+    sigaction(SIGALRM, &sa, NULL);
 
     for(i = debut; i <= fin && flag_s; i += pas)
     {
@@ -347,7 +352,7 @@ void speedtest(int f, int debut, int fin, int pas, int s)
 
       alarm(s);
 
-      gettimeofday(&tv,NULL); // début du temps
+      gettimeofday(&tv, NULL); // début du temps
 
       // appel de la fonction f
       pid = fork();
@@ -373,32 +378,51 @@ void speedtest(int f, int debut, int fin, int pas, int s)
           {
             multiplication(a, b);
           }
-          break;
+
+          exit(2);
 
         default:
 
-          wait(&r);
+          wait(&raison);
           break;
       }
 
-      gettimeofday(&tv2,NULL); // fin du temps
+      gettimeofday(&tv2, NULL); // fin du temps
 
-      if(!WIFSIGNALED(r))
+      if(WIFEXITED(raison))
       {
-        //ecrire
+        fprintf(gnuplot_data, "%d %ld\n", i, (long int)(tv2.tv_usec - tv.tv_usec));
       }
-
-      printf("Temps écoulé : %ld secondes et %ld microsecondes",tv2.tv_sec - tv.tv_sec,tv2.tv_usec - tv.tv_usec);
 
       free(a);
       free(b);
     }
 
-    // gnupllot
+    // on affiche maintenant un graphique avec gnuplot
+
+    FILE *gp;
+
+    gp = popen(GNUPLOT_PATH, "w");
+
+    if(gp == NULL)
+    {
+        fprintf(stderr, "Oops, I can't find %s.", GNUPLOT_PATH);
+        exit(1);
+    }
+
+    fprintf(gp, "load \"config\"\n");
+    fflush(gp);
+    getchar();
+    pclose(gp);
 
   }
   else
   {
     printf("commande inccorecte pour le speedtest\n");
   }
+}
+
+int main()
+{
+  speedtest(1, 5, 50, 5, 100);
 }
