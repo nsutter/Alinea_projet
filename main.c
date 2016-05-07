@@ -599,7 +599,7 @@ int main(int argc, char **argv)
 						 	 printf("					erreur argument\n");
 						 else
 						 {
-							 if(vecteurValeurPropre(m1, m2, &res, 100) != -1)
+							 if(vecteurValeurPropre(m1, m2, &res, 25) != -1)
 							 {
 								 afficheMatrice(m2);
 								 printf("					valeure propre: %.20g\n", res);
