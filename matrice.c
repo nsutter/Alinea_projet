@@ -417,14 +417,13 @@ void handlerSpeedtest()
   flag_s = 0;
 }
 
-// -1 = pas d'attente avec s
 /* @brief Effectue un speedtest sur une commande
  *
  * @param int f l'identifiant de la fonction
  * @param int debut la taille minimale
  * @param int fin la taille maximale
  * @param int pas
- * @param int s la durée maximum (unité : seconde)
+ * @param int s la durée maximum (unité : seconde), -1 = pas de maximum
 */
 void speedtest(int f, int debut, int fin, int pas, int s)
 {
@@ -436,8 +435,6 @@ void speedtest(int f, int debut, int fin, int pas, int s)
 
     struct timeval tv;
     struct timeval tv2;
-
-    char c1 = ' ', c2 = '\n';
 
     pmatrice a, b;
 
@@ -455,7 +452,10 @@ void speedtest(int f, int debut, int fin, int pas, int s)
       b = nouvelleMatrice(i, i);
       genereMatrice(b);
 
-      alarm(s);
+      if(s != -1)
+      {
+        alarm(s);
+      }
 
       gettimeofday(&tv, NULL); // début du temps
 
