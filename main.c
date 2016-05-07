@@ -285,7 +285,7 @@ int main(int argc, char **argv)
        while (getline(&line, &n, f_in)!=1)
        {
 				 printf("> %s\n", line);
-				 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); exit(0);}
+				 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); fclose(f_in); free(f_in); exit(0);}
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
 				 char ** tab= separe(line, ":");
