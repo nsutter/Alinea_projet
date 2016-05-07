@@ -167,8 +167,12 @@ float fonction_f(char * cmd, contexte * ct, int fct, float * res)
 		else if(cmd[i] == ' ') {shift(cmd, i); i--;lg--;}
 	}
 	matrice * m1;
+	int alloue_mat=0;
 	if(strncmp(cmd, "matrix", 6) == 0)
+	{
+		alloue_mat=1;
 		m1=matrix(cmd, ct);
+	}
 	else
 		m1= recherche_mat(cmd, ct);
 	if(m1 != NULL)
@@ -181,6 +185,7 @@ float fonction_f(char * cmd, contexte * ct, int fct, float * res)
 		{
 			*res= rang(m1);
 		}
+		if(alloue_mat == 1) libereMatrice(m1);
 		return 0;
 	}
 	return -1;
@@ -208,16 +213,23 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 	matrice * m1; matrice * m2;
 	float f1;
 	char ** tab;
+	int alloue_mat=0;
 	tab= separe(cmd, ",");
 	if(strncmp(tab[0], "matrix", 6) == 0)
+	{
+		alloue_mat =1;
 		m1=matrix(tab[0], ct);
+	}
 	else
 		m1= recherche_mat(tab[0], ct);
 
 	if(fct < 5)
 	{
 		if(strncmp(tab[1], "matrix", 6) == 0)
+		{
+			alloue_mat= alloue_mat+2;
 			m2=matrix(tab[1], ct);
+		}
 		else
 			m2= recherche_mat(tab[1], ct);
 	}
@@ -232,24 +244,67 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 	if(m1 != NULL && (fct >5 || m2 != NULL))
 	{
 		if(fct == 1)
+		{
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 			return multiplication(m1, m2);
+		}
 		else if(fct == 2)
+		{
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 			return addition(m1, m2);
+		}
 		else if(fct == 3)
+		{
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 			return soustraction(m1, m2);
+		}
 		else if(fct == 4)
+		{
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 			return resolutionGauss(m1, m2);
+		}
 		else if(fct == 5)
+		{
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 			return multiplication_scal(m1, f1);
+		}
 		else if(fct == 6)
+		{
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 			return expo(m1, (int)f1);
+		}
 		else if(fct == 11)
+		{
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 			return transposition(m1);
+		}
 		else if(fct == 12)
+		{
+			if(alloue_mat == 1) libereMatrice(m1);
+			else if(alloue_mat == 2) libereMatrice(m2);
+			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 			return inverse(m1);
+		}
 	}
 	else
 		printf("					erreur paramètre\n");
+	if(alloue_mat == 1) libereMatrice(m1);
+	else if(alloue_mat == 2) libereMatrice(m2);
+	else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
 	return NULL;
 }
 
@@ -285,7 +340,7 @@ int main(int argc, char **argv)
        while (getline(&line, &n, f_in)!=1)
        {
 				 printf("> %s\n", line);
-				 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); exit(0);}
+				 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); fclose(f_in); exit(0);}
 				 char cmd[strlen(line)];
 				 strcpy(cmd, line);
 				 char ** tab= separe(line, ":");
@@ -340,6 +395,7 @@ int main(int argc, char **argv)
 							 {
 						  		if(strcmp(ct->tab_mat[i]->nom, tab[0]) == 0)
 									{
+										libereMatrice(ct->tab_mat[i]->pointeur);
 										ct->tab_mat[i]->pointeur= ptr_mat_tmp;
 										ok = 1;
 									}
@@ -524,6 +580,30 @@ int main(int argc, char **argv)
 						 }
 						 free(speed_arg);
 					 }
+					 else if(strncmp(tab[0], "vp(", 3))
+					 {
+						 char** vp_arg= separe(tab[0], "(");
+						 matrice * m1; matrice * m2; float res;
+						 int alloue_mat=0;
+					 	 if(strncmp(tab[1], "matrix", 6) == 0)
+						 {
+							 alloue_mat =1;
+							 m1=matrix(vp_arg[1], ct);
+						 }
+						 else
+					 		 m1= recherche_mat(vp_arg[1], ct);
+						 if(m1 == NULL)
+						 	 printf("					erreur argument\n");
+						 else
+						 {
+							 vecteurValeurPropre(m1, m2, &res, 100);
+							 afficheMatrice(m2);
+							 printf("					valeure propre: %.20g\n", res);
+						 }
+						 free(vp_arg);
+						 libereMatrice(m2);
+						 if(alloue_mat == 1) libereMatrice(m1);
+					 }
 					 else
 					 {
 						 float * tmp= malloc(sizeof(float));
@@ -556,5 +636,7 @@ int main(int argc, char **argv)
        }
     }
 	 free_context(ct);
+	 free(line);
+	 fclose(f_in);
    return 0;
 }
