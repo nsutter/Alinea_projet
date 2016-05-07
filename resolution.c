@@ -210,7 +210,7 @@ float determinant(pmatrice a)
   else
   {
     printf("          calcul impossible\n");
-    return NULL;
+    return 0;
   }
 }
 

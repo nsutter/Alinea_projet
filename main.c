@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 #include "matrice.h"
 #include "resolution.h"
 
@@ -258,7 +259,9 @@ int main(int argc, char **argv)
 
    FILE *f_in = fdopen(0, "r");
    char *line;
-   size_t n=0; // initialisation sans importance
+   size_t n = 0; // initialisation sans importance
+
+	 srand(time(NULL));
 
 	 contexte* ct= malloc(sizeof(contexte));
 	 ct->tab_mat= malloc(0*sizeof(mat));
