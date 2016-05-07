@@ -91,11 +91,11 @@ matrice * recherche_mat(char * nom_rech, contexte * c)
 int recherche_flo(char * nom_rech, contexte * c, float* res)
 {
 	int i;
-	for(i=0; i< c->longueurf-1; i++)
+	for(i=0; i< c->longueurf; i++)
 	{
 		if(strcmp(c->tab_flo[i]->nom, nom_rech) == 0)
 		{
-			*res= c->tab_flo[i]->val;
+			*(res)= c->tab_flo[i]->val;
 			return 1;
 		}
 	}
