@@ -10,24 +10,41 @@
 
 #define GNUPLOT_PATH "/usr/bin/gnuplot" // chemin d'accès vers gnuplot
 
+#define MIN -99
+#define MAX 99
+
 pid_t pid;
 
 int flag_s = 1;
 
 /* @brief Récupèration d'un élément d'une matrice
  *
- *
+ * @param pmatrice m
+ * @param int i la ligne
+ * @param int j la colonne
 */
 float getElt(pmatrice m, int i, int j)
 {
   return m->tab[i][j];
 }
 
+/* @brief Insertion d'un élément d'une matrice
+ *
+ * @param pmatrice m
+ * @param int i la ligne
+ * @param int j la colonne
+ * @param float valeur
+*/
 void setElt(pmatrice m, int i, int j, float valeur)
 {
   m->tab[i][j] = valeur;
 }
 
+/* @brief Création et allocation d'une nouvelle matrice
+ *
+ * @param int hauteur
+ * @param int largeur
+*/
 pmatrice nouvelleMatrice(int hauteur, int largeur)
 {
   pmatrice m = malloc(sizeof(matrice));
@@ -47,6 +64,10 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
   return m;
 }
 
+/* @brief Renvoie une copie d'une matrice
+ *
+ * @param pmatrice a
+*/
 pmatrice copieMatrice(pmatrice a)
 {
   pmatrice b = nouvelleMatrice(a->hauteur, a->largeur);
@@ -64,6 +85,12 @@ pmatrice copieMatrice(pmatrice a)
   return b;
 }
 
+/* @brief Renvoie une matrice avec les valeurs du tableau en paramètre
+ *
+ * @param int hauteur de la matrice
+ * @param int largeur de la matrice
+ * @param float * tab
+*/
 pmatrice tabMatrice(int hauteur, int largeur, float * tab)
 {
   pmatrice m = nouvelleMatrice(hauteur, largeur);
@@ -82,6 +109,10 @@ pmatrice tabMatrice(int hauteur, int largeur, float * tab)
   return m;
 }
 
+/* @brief La matrice en paramètre devient une matrice identité
+ *
+ * @param pmatrice m modifiée par effet de bord
+*/
 void identite(pmatrice m)
 {
   int i, j;
@@ -102,6 +133,11 @@ void identite(pmatrice m)
   }
 }
 
+/* @brief Renvoie une nouvelle matrice avec l'addition m1 + m2
+ *
+ * @param pmatrice m1
+ * @param pmatrice m2
+*/
 pmatrice addition(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // addition possible
@@ -122,10 +158,16 @@ pmatrice addition(pmatrice m1, pmatrice m2)
   }
   else // addition impossible
   {
+    printf("          addition impossible\n");
     return NULL;
   }
 }
 
+/* @brief Renvoie une nouvelle matrice avec la soustraction m1 - m2
+ *
+ * @param pmatrice m1
+ * @param pmatrice m2
+*/
 pmatrice soustraction(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->largeur && m1->hauteur == m2->hauteur) // soustraction possible
@@ -146,10 +188,18 @@ pmatrice soustraction(pmatrice m1, pmatrice m2)
   }
   else // addition impossible
   {
+    printf("          soustraction impossible\n");
     return NULL;
   }
 }
 
+/* @brief Renvoie le produit de deux lignes de deux matrices
+ *
+ * @param pmatrice m1
+ * @param pmatrice m2
+ * @param int a la ligne
+ * @param int b la colonne
+*/
 float produit(pmatrice m1, pmatrice m2, int a, int b)
 {
   int i;
@@ -163,6 +213,11 @@ float produit(pmatrice m1, pmatrice m2, int a, int b)
   return f;
 }
 
+/* @brief Renvoie une nouvelle matrice avec la multiplication m1 * m2
+ *
+ * @param pmatrice m1
+ * @param pmatrice m2
+*/
 pmatrice multiplication(pmatrice m1, pmatrice m2)
 {
   if(m1->largeur == m2->hauteur)
@@ -183,10 +238,16 @@ pmatrice multiplication(pmatrice m1, pmatrice m2)
   }
   else
   {
+    printf("          multiplication impossible\n");
     return NULL;
   }
 }
 
+/* @brief Renvoie une nouvelle matrice avec la multiplication par un scalaire M * valeur
+ *
+ * @param pmatrice M
+ * @param float valeur
+*/
 pmatrice multiplication_scal(pmatrice M, float valeur)
 {
   pmatrice m = nouvelleMatrice(M->hauteur, M->largeur);
@@ -204,6 +265,10 @@ pmatrice multiplication_scal(pmatrice M, float valeur)
   return m;
 }
 
+/* @brief Renvoie une nouvelle matrice avec la transposée de M
+ *
+ * @param pmatrice M
+*/
 pmatrice transposition(pmatrice M)
 {
   pmatrice m = nouvelleMatrice(M->largeur, M->hauteur);
@@ -221,6 +286,10 @@ pmatrice transposition(pmatrice M)
   return m;
 }
 
+/* @brief Affiche une matrice
+ *
+ * @param pmatrice m
+*/
 void afficheMatrice(pmatrice m)
 {
   if(m == NULL){printf("erreur");}
@@ -243,55 +312,73 @@ void afficheMatrice(pmatrice m)
   }
 }
 
+
+/* @brief Renvoie une nouvelle matrice avec M^n
+ *
+ * @param pmatrice M
+ * @param int n
+*/
 pmatrice expo(pmatrice M, int n)
 {
-  int i;
-
-  pmatrice a = nouvelleMatrice(M->hauteur, M->largeur);
-
-  if(n < 0)
+  if(M->hauteur == M->largeur)
   {
-    return NULL;
-  }
-  else if(n == 0)
-  {
-    identite(a);
+    int i;
 
-    return a;
-  }
-  else if(n == 1)
-  {
-    a = copieMatrice(M);
+    pmatrice a = nouvelleMatrice(M->hauteur, M->largeur);
 
-    return a;
+    if(n < 0)
+    {
+      return NULL;
+    }
+    else if(n == 0)
+    {
+      identite(a);
+
+      return a;
+    }
+    else if(n == 1)
+    {
+      a = copieMatrice(M);
+
+      return a;
+    }
+    else
+    {
+      a = copieMatrice(M);
+
+      pmatrice * tab = malloc((n - 1) * sizeof(pmatrice)); // tableau des pointeurs à supprimer à la fin
+
+      for(i = 1; i < n; i++)
+      {
+        if(i < n)
+        {
+          tab[i - 1] = a;
+        }
+
+        a = multiplication(a, M);
+      }
+
+      for(i = 0; i < n - 1; i++)
+      {
+        libereMatrice(tab[i]);
+      }
+
+      free(tab);
+
+      return a;
+    }
   }
   else
   {
-    a = copieMatrice(M);
-
-    pmatrice * tab = malloc((n - 1) * sizeof(pmatrice)); // tableau des pointeurs à supprimer à la fin
-
-    for(i = 1; i < n; i++)
-    {
-      if(i < n)
-      {
-        tab[i - 1] = a;
-      }
-
-      a = multiplication(a, M);
-    }
-
-    for(i = 0; i < n - 1; i++)
-    {
-      libereMatrice(tab[i]);
-    }
-
-    free(tab);
-
-    return a;
+    printf("          expo impossible\n");
+    return NULL;
   }
 }
 
+/* @brief Libére l'espace alloué par une matrice
+ *
+ * @param pmatrice a
+*/
 void libereMatrice(pmatrice a)
 {
   int i;
@@ -305,19 +392,25 @@ void libereMatrice(pmatrice a)
   free(a);
 }
 
+/* @brief Génère une matrice aléatoire entre les variables MIN et MAX
+ *
+ * @param pmatrice m
+*/
 void genereMatrice(pmatrice m)
 {
-  int i, j, min = -99, max = 99;
+  int i, j;
 
   for(i = 0; i < m->hauteur; i++)
   {
     for(j = 0; j < m->largeur; j++)
     {
-      setElt(m, i, j, rand()%(max-min) + min);
+      setElt(m, i, j, rand()%(MAX-MIN) + MIN);
     }
   }
 }
 
+/* @brief Interruption du speedtest
+*/
 void handlerSpeedtest()
 {
   kill(pid, 9);
@@ -325,6 +418,14 @@ void handlerSpeedtest()
 }
 
 // -1 = pas d'attente avec s
+/* @brief Effectue un speedtest sur une commande
+ *
+ * @param int f l'identifiant de la fonction
+ * @param int debut la taille minimale
+ * @param int fin la taille maximale
+ * @param int pas
+ * @param int s la durée maximum (unité : seconde)
+*/
 void speedtest(int f, int debut, int fin, int pas, int s)
 {
   if(f == 1 || f == 2 || f == 3)
@@ -418,11 +519,10 @@ void speedtest(int f, int debut, int fin, int pas, int s)
     fflush(gp);
     getchar();
     pclose(gp);
-
   }
   else
   {
-    printf("commande inccorecte pour le speedtest\n");
+    printf("          commande incorrecte pour le speedtest\n");
   }
 }
 
