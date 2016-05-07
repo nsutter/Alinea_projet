@@ -598,9 +598,10 @@ int main(int argc, char **argv)
 						 	 printf("					erreur argument\n");
 						 else
 						 {
-							 if(vecteurValeurPropre(m1, m2, &res, 25) != -1)
+							 pmatrice m2 = vecteurValeurPropre(m1, &res, 25);
+
+							 if(m2 != NULL)
 							 {
-								 m2= malloc(sizeof(matrice));
 								 afficheMatrice(m2);
 								 printf("					valeure propre: %.20g\n", res);
 								 libereMatrice(m2);

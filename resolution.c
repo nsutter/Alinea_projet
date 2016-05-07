@@ -406,16 +406,15 @@ float maximumAbsolue(pmatrice a)
 /* @brief Renvoie un vecteur propre et une valeur propre par effet de bord
  *
  * @param pmatrice a
- * @param pmatrice b le vecteur propre modifié par effet de bord (non alloué)
  * @param float * f la valeur propre modifiée par effet de bord
 */
-int vecteurValeurPropre(pmatrice a, pmatrice b, float * f, int precision)
+pmatrice vecteurValeurPropre(pmatrice a, float * f, int precision)
 {
   if(a->hauteur == a->largeur)
   {
     int i;
 
-    b = nouvelleMatrice(a->hauteur, 1);
+    pmatrice b = nouvelleMatrice(a->hauteur, 1);
 
     for(i = 0; i < b->hauteur; i++)
     {
@@ -431,11 +430,11 @@ int vecteurValeurPropre(pmatrice a, pmatrice b, float * f, int precision)
       multiplication_scal(b, (float)1 / *f);
     }
 
-    return 1;
+    return b;
   }
   else
   {
     printf("          calcul impossible\n");
-    return -1;
+    return NULL;
   }
 }
