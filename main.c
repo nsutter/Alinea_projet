@@ -594,7 +594,6 @@ int main(int argc, char **argv)
 						 }
 						 else
 					 		 m1= recherche_mat(vp_arg[0], ct);
-						 printf("%s\n", vp_arg[0]);
 						 if(m1 == NULL)
 						 	 printf("					erreur argument\n");
 						 else
@@ -605,7 +604,6 @@ int main(int argc, char **argv)
 								 afficheMatrice(m2);
 								 printf("					valeure propre: %.20g\n", res);
 								 libereMatrice(m2);
-								 free(m2);
 							 }
 							 else
 							 	 printf("						an error occured\n");
