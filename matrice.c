@@ -52,14 +52,21 @@ pmatrice nouvelleMatrice(int hauteur, int largeur)
   m->hauteur = hauteur;
   m->largeur = largeur;
 
-  int i;
+  int i, j;
 
   m->tab = malloc(hauteur * sizeof(float*));
 
   for(i = 0; i < m->hauteur; i++)
   {
     m->tab[i] = malloc(largeur * sizeof(float));
+
+    for(j = 0; j < m->largeur; j++)
+    {
+      m->tab[i][j] = 0;
+    }
   }
+
+
 
   return m;
 }
@@ -292,10 +299,13 @@ pmatrice transposition(pmatrice M)
 */
 void afficheMatrice(pmatrice m)
 {
-  if(m == NULL){printf("erreur");}
+  if(m == NULL)
+  {
+    printf("         affichage impossible\n");
+  }
   else
   {
-    int i,j;
+    int i, j;
 
     for(i = 0; i < m->hauteur; i++)
     {
