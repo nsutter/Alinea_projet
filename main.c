@@ -226,9 +226,9 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 		if((tab[1][0] >= '0' && tab[1][0] <= '9') || tab[1][0] == '-' || tab[1][0] == '.')
 			f1=atoi(tab[1]);
 		else
-			if(recherche_flo(tab[1], ct, &f1) == 1){ printf("					erreur argument\n"); return NULL;}
+			if(recherche_flo(tab[1], ct, &f1) == 1){ printf("					erreur argument\n"); free(tab); return NULL;}
 	}
-
+	free(tab);
 	if(m1 != NULL && (fct >5 || m2 != NULL))
 	{
 		if(fct == 1)
