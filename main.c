@@ -618,7 +618,7 @@ int main(int argc, char **argv)
 						 	 printf("					erreur argument\n");
 						 else
 						 {
-							 pmatrice m2 = vecteurValeurPropre(m1, &res, 25);
+							 pmatrice m2 = vecteurValeurPropre(m1, &res, 0.05);
 
 							 if(m2 != NULL)
 							 {

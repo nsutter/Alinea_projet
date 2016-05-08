@@ -393,9 +393,9 @@ float maximumAbsolue(pmatrice a)
   {
     for(j = 0; j < a->largeur; j++)
     {
-      if(abs(getElt(a, i, j)) > max)
+      if(fabs(getElt(a, i, j)) > max)
       {
-        max = abs(getElt(a, i, j));
+        max = fabs(getElt(a, i, j));
       }
     }
   }
@@ -408,11 +408,13 @@ float maximumAbsolue(pmatrice a)
  * @param pmatrice a
  * @param float * f la valeur propre modifiée par effet de bord
 */
-pmatrice vecteurValeurPropre(pmatrice a, float * f, int precision)
+pmatrice vecteurValeurPropre(pmatrice a, float * f, float precision)
 {
   if(a->hauteur == a->largeur)
   {
     int i;
+
+    double f1 = 0, f2;
 
     pmatrice b = nouvelleMatrice(a->hauteur, 1);
 
@@ -421,14 +423,20 @@ pmatrice vecteurValeurPropre(pmatrice a, float * f, int precision)
       setElt(b, i, 0, 1);
     }
 
-    for(i = 0; i < precision; i++)
+    do
     {
+      f2 = f1;
+
       b = multiplication(a, b);
 
-      *f = maximumAbsolue(b);
+      afficheMatrice(b);
 
-      multiplication_scal(b, (float)1 / *f);
-    }
+      f1 = maximumAbsolue(b);
+
+      b = multiplication_scal(b, 1 / f1);
+    } while(fabs(f1 - f2) > precision);
+
+    *f = f1;
 
     return b;
   }

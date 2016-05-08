@@ -21,6 +21,6 @@ pmatrice moindreCarre(pmatrice m);
 
 float maximumAbsolue(pmatrice a);
 
-pmatrice vecteurValeurPropre(pmatrice a, float * f, int precision);
+pmatrice vecteurValeurPropre(pmatrice a, float * f, float precision);
 
 #endif
