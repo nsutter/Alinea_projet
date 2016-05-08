@@ -302,9 +302,7 @@ pmatrice inverse(pmatrice a)
 
 pmatrice moindreCarre(pmatrice m)
 {
-  double x, y;
-
-  double sx = 0, sy = 0, sxy = 0, sxx = 0, res, y_temporaire;
+  double x, y, sx = 0, sy = 0, sxx = 0, sxy = 0, res, y_temporaire;
 
   int i, n = m->hauteur;
 
@@ -316,8 +314,8 @@ pmatrice moindreCarre(pmatrice m)
     sxx = sxx + getElt(m, i, 0) * getElt(m, i, 0);
   }
 
-  x = ( sx * sy - n * sxy ) / ( sx * sx - n * sxx );
-  y = ( sy - x * sx ) / n;
+  x = (sx * sy - n * sxy) / (sx * sx - n * sxx);
+  y = (sy - x * sx) / n;
 
   pmatrice residus = nouvelleMatrice(n, 1);
 
@@ -336,12 +334,6 @@ pmatrice moindreCarre(pmatrice m)
   setElt(coefficient, 0, 1, y);
 
   FILE * gnuplot_data;
-
-  gnuplot_data = fopen( "gnuplot_data_coefficient", "w" );
-
-  fprintf(gnuplot_data, "%f %f\n", x, y);
-
-  fclose(gnuplot_data);
 
   gnuplot_data = fopen( "gnuplot_data_points", "w" );
 
@@ -370,7 +362,7 @@ pmatrice moindreCarre(pmatrice m)
   fprintf(gp,"set ylabel 'y'\n");
   fprintf(gp, "set xrange [-99:99]\n");
   fprintf(gp, "set yrange [-99:99]\n");
-  fprintf(gp,"plot 'gnuplot_data_coefficient' using 1:2, %f*x + %f\n", x, y);
+  fprintf(gp,"plot 'gnuplot_data_points' using 1:2, %f*x + %f\n", x, y);
   fflush(gp);
   printf("[ENTER] dans le terminal pour quitter le graphique");
   getchar();
@@ -428,8 +420,6 @@ pmatrice vecteurValeurPropre(pmatrice a, float * f, float precision)
       f2 = f1;
 
       b = multiplication(a, b);
-
-      afficheMatrice(b);
 
       f1 = maximumAbsolue(b);
 
