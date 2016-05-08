@@ -195,9 +195,9 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 {
 	while(cmd[0] != '(') shift(cmd, 0);
 	int i, virgule=0;
-	for(i=0; i<(int)strlen(cmd); i++)
+	for(i=0; cmd[i] != '\0'; i++)
 	{
-		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ' || cmd[i] == '\n')
+		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ' || cmd[i] == '\n' || cmd[i]== 13)
 		{
 			shift(cmd, i);
 			i-- ;
@@ -327,7 +327,6 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 int main(int argc, char **argv)
 {
    struct stat buf;
-
    FILE *f_in = fdopen(0, "r");
    char *line;
    size_t n = 0; // initialisation sans importance
@@ -340,162 +339,115 @@ int main(int argc, char **argv)
 	 ct->tab_flo= malloc(0*sizeof(flo));
 	 ct->longueurf= 0;
 
-   if (!fstat(0, &buf) && S_ISREG(buf.st_mode))
+
+   line=NULL;
+	 if (!fstat(0, &buf) && S_ISREG(buf.st_mode));
+	 else printf("\n>");
+   while (getline(&line, &n, f_in)!=1)
    {
-       line=NULL;
-       while (getline(&line, &n, f_in) != -1)
-       {
-           printf("Ligne : %s\n", line);
-           free(line); line=NULL;
-       }
-    }
-    else
-    {
-       printf(">");
-       line=NULL;
-       while (getline(&line, &n, f_in)!=1)
-       {
-				 printf("> %s\n", line);
-				 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); fclose(f_in); exit(0);}
-				 char cmd[strlen(line)];
-				 strcpy(cmd, line);
-				 char ** tab= separe(line, ":");
+		 if (!fstat(0, &buf) && S_ISREG(buf.st_mode))
+		 {
+		 		printf(">%s\n", line);
+		 }
+		//  printf("dernier char:%d\n", line[strlen(line)-1]);
+		 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); fclose(f_in); exit(0);}
+		 else if(strcmp(line, "quit") == 0){free(line); free_context(ct); fclose(f_in); exit(0);}
+		 char cmd[strlen(line)];
+		 strcpy(cmd, line);
+		 char ** tab= separe(line, ":");
 
-				 int lg; int i;
-				 for(lg=0; tab[lg] != NULL ; lg++) ;
-				 if(lg>1)
+		 int lg; int i;
+		 for(lg=0; tab[lg] != NULL ; lg++) ;
+		 if(lg>1)
+		 {
+			 while(tab[1][0] == ' ')for(i=0; i< (int) strlen(tab[1]); i++) tab[1][i]=tab[1][i+1]; // suppression du premier espace
+			 tab[1][strlen(tab[1])]= '\0';
+			 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression espace
+			 if(tab[1][0] < '0' || tab[1][0] > '9')
+			 {
+				 matrice * ptr_mat_tmp;
+				 int fct=0;
+				 if(strncmp(tab[1], "matrix", 6) == 0)
 				 {
-					 while(tab[1][0] == ' ')for(i=0; i< (int) strlen(tab[1]); i++) tab[1][i]=tab[1][i+1]; // suppression du premier espace
-					 tab[1][strlen(tab[1])]= '\0';
-					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression espace
-					 if(tab[1][0] < '0' || tab[1][0] > '9')
-					 {
-						 matrice * ptr_mat_tmp;
-						 int fct=0;
-						 if(strncmp(tab[1], "matrix", 6) == 0)
-						 {
-							 ptr_mat_tmp= matrix(tab[1], ct);
-							 fct = -1;
-						 }
-						 else if(strncmp(tab[1], "mult(", 5) == 0)
-							 fct = 1;
-						 else if(strncmp(tab[1], "addition(", 9) == 0)
-						 	 fct = 2;
-						 else if(strncmp(tab[1], "sub(", 4) == 0)
-						 	 fct = 3;
-						 else if(strncmp(tab[1], "solve(", 6) == 0)
-						 	 fct = 4;
-						 else if(strncmp(tab[1], "mult_scal(", 10) == 0)
-  						  fct = 5;
-  				 	 else if(strncmp(tab[1], "expo(", 5) == 0)
-  						  fct = 6;
-  					 else if(strncmp(tab[1], "transpose(", 10) == 0)
-  				  		fct = 11;
-  					 else if(strncmp(tab[1], "invert(", 7) == 0)
-  	 				  	fct = 12;
-						 else if(strncmp(tab[1], "mcarre(", 7) == 0)
- 	 				    	fct = 13;
-						 else if(strncmp(tab[1], "determinant(", 12) == 0)
-						 	 fct= 20;
-						 else if(strncmp(tab[1], "rang(", 5) == 0)
-					  		fct= 21;
-						 if(fct > 0 && fct < 20)
-						 {
-							 ptr_mat_tmp= fonction(tab[1], ct, fct);
-						 }
-						 if(fct != 0 && ptr_mat_tmp != NULL)
-						 {
-							 afficheMatrice(ptr_mat_tmp);
+					 ptr_mat_tmp= matrix(tab[1], ct);
+					 fct = -1;
+				 }
+				 else if(strncmp(tab[1], "mult(", 5) == 0)
+					 fct = 1;
+				 else if(strncmp(tab[1], "addition(", 9) == 0)
+				 	 fct = 2;
+				 else if(strncmp(tab[1], "sub(", 4) == 0)
+				 	 fct = 3;
+				 else if(strncmp(tab[1], "solve(", 6) == 0)
+				 	 fct = 4;
+				 else if(strncmp(tab[1], "mult_scal(", 10) == 0)
+					  fct = 5;
+			 	 else if(strncmp(tab[1], "expo(", 5) == 0)
+					  fct = 6;
+				 else if(strncmp(tab[1], "transpose(", 10) == 0)
+			  		fct = 11;
+				 else if(strncmp(tab[1], "invert(", 7) == 0)
+ 				  	fct = 12;
+				 else if(strncmp(tab[1], "mcarre(", 7) == 0)
+ 				    	fct = 13;
+				 else if(strncmp(tab[1], "determinant(", 12) == 0)
+				 	 fct= 20;
+				 else if(strncmp(tab[1], "rang(", 5) == 0)
+			  		fct= 21;
+				 if(fct > 0 && fct < 20)
+				 {
+					 ptr_mat_tmp= fonction(tab[1], ct, fct);
+				 }
+				 if(fct != 0 && ptr_mat_tmp != NULL)
+				 {
+					 afficheMatrice(ptr_mat_tmp);
 
-							 int i;
-							 int ok = 0;
-					 		 for(i=0; i< ct->longueurm; i++)
-							 {
-						  		if(strcmp(ct->tab_mat[i]->nom, tab[0]) == 0)
-									{
-										libereMatrice(ct->tab_mat[i]->pointeur);
-										ct->tab_mat[i]->pointeur= ptr_mat_tmp;
-										ok = 1;
-									}
-							 }
-							 for(i=0; i< ct->longueurf; i++)
-						 	 {
-						 			if(strcmp(ct->tab_flo[i]->nom, tab[0]) == 0)
-						 			{
-										free(ct->tab_flo[i]->nom);
-										for(; i< ct->longueurf-1; i++)
-										{
-											ct->tab_mat[i]= ct->tab_mat[i+1];
-										}
-										ct->longueurf--;
-										free(ct->tab_flo[ct->longueurf]);
-										break;
-						 			}
-						 	 }
-							 if(ok == 0)
-							 {
-								 mat m= malloc(sizeof(sizemat));
-								 m->nom= malloc((int)strlen(tab[0])+1);
-								 strcpy(m->nom, tab[0]);
-								 ct->longueurm++;
-								 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
-								 m->pointeur= ptr_mat_tmp;
-								 ct->tab_mat[ct->longueurm-1]= m;
-							 }
-						 }
-						 else if(fct > 19)
-						 {
-							 float res;
-							 if(fonction_f(tab[0], ct, fct, &res) == 0)
-							 {
-								 int i;
-								 int ok =0;
-						 		 for(i=0; i< ct->longueurm; i++)
-								 {
-							  		if(strcmp(ct->tab_mat[i]->nom, tab[0]) == 0)
-										{
-											libereMatrice(ct->tab_mat[i]->pointeur);
-											free(ct->tab_mat[i]->nom);
-											for(; i< ct->longueurm-1; i++)
-											{
-												ct->tab_mat[i]= ct->tab_mat[i+1];
-											}
-											ct->longueurm--;
-											free(ct->tab_mat[i+1]);
-											break;
-										}
-								 }
-								 for(i=0; i< ct->longueurf; i++)
-							 	 {
-							 			if(strcmp(ct->tab_flo[i]->nom, tab[0]) == 0)
-							 			{
-											ct->tab_flo[i]->val= res;
-											ok =1;
-							 			}
-							 	 }
-								 if(ok == 0)
-								 {
-									 printf("					%.20g\n", res);
-									 flo f= malloc(sizeof(sizeflo));
-									 f->nom= malloc((int)strlen(tab[0])+1 );
-									 strcpy(f->nom, tab[0]);
-									 f->val= res;
-									 ct->longueurf++;
-									 ct->tab_flo= realloc(ct->tab_flo, ct->longueurf*sizeof(flo));
-									 ct->tab_flo[ct->longueurf-1]= f;
-								 }
-							 }
-						 }
-						 else if(fct == 0)
-						 	printf("					cmd not found\n");
+					 int i;
+					 int ok = 0;
+			 		 for(i=0; i< ct->longueurm; i++)
+					 {
+				  		if(strcmp(ct->tab_mat[i]->nom, tab[0]) == 0)
+							{
+								libereMatrice(ct->tab_mat[i]->pointeur);
+								ct->tab_mat[i]->pointeur= ptr_mat_tmp;
+								ok = 1;
+							}
 					 }
-					 else
+					 for(i=0; i< ct->longueurf; i++)
+				 	 {
+				 			if(strcmp(ct->tab_flo[i]->nom, tab[0]) == 0)
+				 			{
+								free(ct->tab_flo[i]->nom);
+								for(; i< ct->longueurf-1; i++)
+								{
+									ct->tab_mat[i]= ct->tab_mat[i+1];
+								}
+								ct->longueurf--;
+								free(ct->tab_flo[ct->longueurf]);
+								break;
+				 			}
+				 	 }
+					 if(ok == 0)
+					 {
+						 mat m= malloc(sizeof(sizemat));
+						 m->nom= malloc((int)strlen(tab[0])+1);
+						 strcpy(m->nom, tab[0]);
+						 ct->longueurm++;
+						 ct->tab_mat= realloc(ct->tab_mat, ct->longueurm*sizeof(mat));
+						 m->pointeur= ptr_mat_tmp;
+						 ct->tab_mat[ct->longueurm-1]= m;
+					 }
+				 }
+				 else if(fct > 19)
+				 {
+					 float res;
+					 if(fonction_f(tab[0], ct, fct, &res) == 0)
 					 {
 						 int i;
 						 int ok =0;
-						 for(i=0; i< ct->longueurm; i++)
+				 		 for(i=0; i< ct->longueurm; i++)
 						 {
-								if(strcmp(ct->tab_mat[i]->nom, tab[0]) == 0)
+					  		if(strcmp(ct->tab_mat[i]->nom, tab[0]) == 0)
 								{
 									libereMatrice(ct->tab_mat[i]->pointeur);
 									free(ct->tab_mat[i]->nom);
@@ -504,165 +456,209 @@ int main(int argc, char **argv)
 										ct->tab_mat[i]= ct->tab_mat[i+1];
 									}
 									ct->longueurm--;
-									free(ct->tab_mat[ct->longueurm]);
+									free(ct->tab_mat[i+1]);
 									break;
 								}
 						 }
 						 for(i=0; i< ct->longueurf; i++)
-						 {
-								if(strcmp(ct->tab_flo[i]->nom, tab[0]) == 0)
-								{
-									ct->tab_flo[i]->val= atof(tab[1]);
-									printf("					%.20g\n", ct->tab_flo[i]->val);
+					 	 {
+					 			if(strcmp(ct->tab_flo[i]->nom, tab[0]) == 0)
+					 			{
+									ct->tab_flo[i]->val= res;
 									ok =1;
-								}
-						 }
+					 			}
+					 	 }
 						 if(ok == 0)
 						 {
+							 printf("					%.20g\n", res);
 							 flo f= malloc(sizeof(sizeflo));
-							 f->nom= malloc(strlen(tab[0])+1 );
+							 f->nom= malloc((int)strlen(tab[0])+1 );
 							 strcpy(f->nom, tab[0]);
-							 f->val= atof(tab[1]);
+							 f->val= res;
 							 ct->longueurf++;
 							 ct->tab_flo= realloc(ct->tab_flo, ct->longueurf*sizeof(flo));
 							 ct->tab_flo[ct->longueurf-1]= f;
-							 printf("					%.20g\n", f->val);
 						 }
 					 }
+				 }
+				 else if(fct == 0)
+				 	printf("					cmd not found\n");
+			 }
+			 else
+			 {
+				 int i;
+				 int ok =0;
+				 for(i=0; i< ct->longueurm; i++)
+				 {
+						if(strcmp(ct->tab_mat[i]->nom, tab[0]) == 0)
+						{
+							libereMatrice(ct->tab_mat[i]->pointeur);
+							free(ct->tab_mat[i]->nom);
+							for(; i< ct->longueurm-1; i++)
+							{
+								ct->tab_mat[i]= ct->tab_mat[i+1];
+							}
+							ct->longueurm--;
+							free(ct->tab_mat[ct->longueurm]);
+							break;
+						}
+				 }
+				 for(i=0; i< ct->longueurf; i++)
+				 {
+						if(strcmp(ct->tab_flo[i]->nom, tab[0]) == 0)
+						{
+							ct->tab_flo[i]->val= atof(tab[1]);
+							printf("					%.20g\n", ct->tab_flo[i]->val);
+							ok =1;
+						}
+				 }
+				 if(ok == 0)
+				 {
+					 flo f= malloc(sizeof(sizeflo));
+					 f->nom= malloc(strlen(tab[0])+1 );
+					 strcpy(f->nom, tab[0]);
+					 f->val= atof(tab[1]);
+					 ct->longueurf++;
+					 ct->tab_flo= realloc(ct->tab_flo, ct->longueurf*sizeof(flo));
+					 ct->tab_flo[ct->longueurf-1]= f;
+					 printf("					%.20g\n", f->val);
+				 }
+			 }
+		 }
+		 else
+		 {
+			 int fct =0;
+			 tab[0][strlen(tab[0])-1]='\0'; // suppression du \n
+			 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression des espaces
+			 if(strncmp(tab[0], "matrix(", 7) == 0)
+			 {
+				 matrice * m= matrix(cmd, ct);
+				 if(m!=NULL)
+				 {
+					 afficheMatrice(m);
+					 libereMatrice(m);
+				 }
+			 }
+			 else if(strncmp(tab[0], "mult(", 5) == 0)
+			 	 fct = 1;
+			 else if(strncmp(tab[0], "addition(", 9) == 0)
+				 fct = 2;
+			 else if(strncmp(tab[0], "sub(", 4) == 0)
+					fct = 3;
+			 else if(strncmp(tab[0], "solve(", 6) == 0)
+		 		  fct = 4;
+			 else if(strncmp(tab[0], "mult_scal(", 10) == 0)
+				  fct = 5;
+		 	 else if(strncmp(tab[0], "expo(", 5) == 0)
+				  fct = 6;
+			 else if(strncmp(tab[0], "transpose(", 10) == 0)
+		  		fct = 11;
+			 else if(strncmp(tab[0], "invert(", 7) == 0)
+				  	fct = 12;
+		   else if(strncmp(tab[0], "mcarre(", 7) == 0)
+					fct = 12;
+			 else if(strncmp(tab[0], "determinant(", 12) == 0)
+		  		fct= 20;
+			 else if(strncmp(tab[0], "rang(", 5) == 0)
+		  		fct= 21;
+			 else if(strncmp(tab[0], "speedtest ", 10) ==0)
+			 {
+				 char ** speed_arg= separe(tab[0], " ");
+				 int i,j;
+				 int erreur= 0;
+				 for(i=0; speed_arg[i] != NULL; i++)
+				 {
+					 for(j=0; speed_arg[i][j] != '\0'; j++)
+					 {
+						 if(i > 1 && speed_arg[i][j] >= '0' && speed_arg[i][j] <= '9');
+						 else if(i>1)
+						 {
+							 printf("					erreur arguments\n");
+							 erreur = 1;
+						 }
+					 }
+				 }
+				 if(i < 4 && erreur == 0)
+				 		printf("					erreur nombre d'arguments\n");
+				 else if(erreur == 0)
+				 {
+					 int fct_speed=0;
+					 if(strcmp("addition", speed_arg[1]) == 0) fct_speed=2;
+					 else if(strcmp("sub", speed_arg[1]) == 0) fct_speed=3;
+					 else if(strcmp("mult", speed_arg[1]) == 0) fct_speed= 1;
+					 else
+					    printf("					commande en argument inconnue\n");
+					 if(fct_speed != 0 && i != 5)
+					 	 speedtest(fct_speed, atoi(speed_arg[2]), atoi(speed_arg[3]), atoi(speed_arg[4]), -1);
+					 else if(fct_speed != 0 && i == 5)
+					 	 speedtest(fct_speed, atoi(speed_arg[2]), atoi(speed_arg[3]), atoi(speed_arg[4]), atoi(speed_arg[5]));
+				 }
+				 free(speed_arg);
+			 }
+			 else if(strncmp(tab[0], "vp(", 3) == 0)
+			 {
+				 char** vp_arg_int= separe(tab[0], "(");
+				 char** vp_arg= separe(vp_arg_int[1], ")");
+				 free(vp_arg_int);
+				 matrice * m1; matrice * m2; float res;
+				 int alloue_mat=0;
+			 	 if(strncmp(vp_arg[0], "matrix", 6) == 0)
+				 {
+					 alloue_mat =1;
+					 m1=matrix(vp_arg[0], ct);
 				 }
 				 else
+			 		 m1= recherche_mat(vp_arg[0], ct);
+				 if(m1 == NULL)
+				 	 printf("					erreur argument\n");
+				 else
 				 {
-					 int fct =0;
-					 tab[0][strlen(tab[0])-1]='\0'; // suppression du \n
-					 for(i=1; tab[0][strlen(tab[0])-i] == ' '; i++) tab[0][strlen(tab[0])-i]= '\0'; // suppression des espaces
-					 if(strncmp(tab[0], "matrix(", 7) == 0)
-					 {
-						 matrice * m= matrix(cmd, ct);
-						 if(m!=NULL)
-						 {
-							 afficheMatrice(m);
-							 libereMatrice(m);
-						 }
-					 }
-					 else if(strncmp(tab[0], "mult(", 5) == 0)
-					 	 fct = 1;
-					 else if(strncmp(tab[0], "addition(", 9) == 0)
-						 fct = 2;
-					 else if(strncmp(tab[0], "sub(", 4) == 0)
-							fct = 3;
-					 else if(strncmp(tab[0], "solve(", 6) == 0)
-				 		  fct = 4;
-					 else if(strncmp(tab[0], "mult_scal(", 10) == 0)
-						  fct = 5;
-				 	 else if(strncmp(tab[0], "expo(", 5) == 0)
-						  fct = 6;
-					 else if(strncmp(tab[0], "transpose(", 10) == 0)
-				  		fct = 11;
-					 else if(strncmp(tab[0], "invert(", 7) == 0)
-	 				  	fct = 12;
-				   else if(strncmp(tab[0], "mcarre(", 7) == 0)
-							fct = 12;
-					 else if(strncmp(tab[0], "determinant(", 12) == 0)
-				  		fct= 20;
-					 else if(strncmp(tab[0], "rang(", 5) == 0)
-				  		fct= 21;
-					 else if(strncmp(tab[0], "speedtest ", 10) ==0)
-					 {
-						 char ** speed_arg= separe(tab[0], " ");
-						 int i,j;
-						 int erreur= 0;
-						 for(i=0; speed_arg[i] != NULL; i++)
-						 {
-							 for(j=0; speed_arg[i][j] != '\0'; j++)
-							 {
-								 if(i > 1 && speed_arg[i][j] >= '0' && speed_arg[i][j] <= '9');
-								 else if(i>1)
-								 {
-									 printf("					erreur arguments\n");
-									 erreur = 1;
-								 }
-							 }
-						 }
-						 if(i < 4 && erreur == 0)
-						 		printf("					erreur nombre d'arguments\n");
-						 else if(erreur == 0)
-						 {
-							 int fct_speed=0;
-							 if(strcmp("addition", speed_arg[1]) == 0) fct_speed=2;
-							 else if(strcmp("sub", speed_arg[1]) == 0) fct_speed=3;
-							 else if(strcmp("mult", speed_arg[1]) == 0) fct_speed= 1;
-							 else
-							    printf("					commande en argument inconnue\n");
-							 if(fct_speed != 0 && i != 5)
-							 	 speedtest(fct_speed, atoi(speed_arg[2]), atoi(speed_arg[3]), atoi(speed_arg[4]), -1);
-							 else if(fct_speed != 0 && i == 5)
-							 	 speedtest(fct_speed, atoi(speed_arg[2]), atoi(speed_arg[3]), atoi(speed_arg[4]), atoi(speed_arg[5]));
-						 }
-						 free(speed_arg);
-					 }
-					 else if(strncmp(tab[0], "vp(", 3) == 0)
-					 {
-						 char** vp_arg_int= separe(tab[0], "(");
-						 char** vp_arg= separe(vp_arg_int[1], ")");
-						 free(vp_arg_int);
-						 matrice * m1; matrice * m2; float res;
-						 int alloue_mat=0;
-					 	 if(strncmp(vp_arg[0], "matrix", 6) == 0)
-						 {
-							 alloue_mat =1;
-							 m1=matrix(vp_arg[0], ct);
-						 }
-						 else
-					 		 m1= recherche_mat(vp_arg[0], ct);
-						 if(m1 == NULL)
-						 	 printf("					erreur argument\n");
-						 else
-						 {
-							 pmatrice m2 = vecteurValeurPropre(m1, &res, 0.05);
+					 pmatrice m2 = vecteurValeurPropre(m1, &res, 0.05);
 
-							 if(m2 != NULL)
-							 {
-								 printf("					valeure propre: %.20g\n", res);
-								 afficheMatrice(m2);
-								 libereMatrice(m2);
-							 }
-							 else
-							 	 printf("						an error occured\n");
-						 }
-						 free(vp_arg);
-						 if(alloue_mat == 1) libereMatrice(m1);
+					 if(m2 != NULL)
+					 {
+						 printf("					valeur propre : %.20g\n", res);
+						 afficheMatrice(m2);
+						 libereMatrice(m2);
 					 }
 					 else
-					 {
-						 float * tmp= malloc(sizeof(float));
-						 if(recherche_flo(tab[0], ct, tmp) == 1) printf("					%.20g\n", *(tmp) );
-						 else if(recherche_mat(tab[0], ct) != NULL) afficheMatrice(recherche_mat(tab[0], ct));
-						 else printf("					cmd not found\n");
-						 free(tmp);
-					 }
-					 if(fct > 0 && fct < 20)
-					 {
-						 matrice * m= fonction(tab[0], ct, fct);
-						 if(m!=NULL)
-						 {
-							 afficheMatrice(m);
-							 libereMatrice(m);
-						 }
-					 }
-					 else if(fct > 19)
-					 {
-						 float res;
-						 if(fonction_f(tab[0], ct, fct, &res) == 0)
-						 {
-							 printf("					%.20g\n", res);
-						 }
-					 }
+					 	 printf("						an error occured\n");
 				 }
-				 free(tab);
-         free(line); line=NULL;
-         printf("\n>");
-       }
-    }
+				 free(vp_arg);
+				 if(alloue_mat == 1) libereMatrice(m1);
+			 }
+			 else
+			 {
+				 float * tmp= malloc(sizeof(float));
+				 if(recherche_flo(tab[0], ct, tmp) == 1) printf("					%.20g\n", *(tmp) );
+				 else if(recherche_mat(tab[0], ct) != NULL) afficheMatrice(recherche_mat(tab[0], ct));
+				 else printf("					cmd not found\n");
+				 free(tmp);
+			 }
+			 if(fct > 0 && fct < 20)
+			 {
+				 matrice * m= fonction(tab[0], ct, fct);
+				 if(m!=NULL)
+				 {
+					 afficheMatrice(m);
+					 libereMatrice(m);
+				 }
+			 }
+			 else if(fct > 19)
+			 {
+				 float res;
+				 if(fonction_f(tab[0], ct, fct, &res) == 0)
+				 {
+					 printf("					%.20g\n", res);
+				 }
+			 }
+		 }
+		 free(tab);
+     free(line); line=NULL;
+		 if (!fstat(0, &buf) && S_ISREG(buf.st_mode));
+		 else printf("\n>");
+   }
+
 	 free_context(ct);
 	 free(line);
 	 fclose(f_in);

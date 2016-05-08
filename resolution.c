@@ -183,6 +183,8 @@ float triangulaireDeterminant(pmatrice a)
     }
   }
 
+  libereMatrice(b);
+
   return v;
 }
 
@@ -290,8 +292,11 @@ pmatrice inverse(pmatrice a)
         setElt(res, j, i, f);
       }
 
-      free(x);
+      libereMatrice(x);
     }
+
+    libereMatrice(id);
+    libereMatrice(b);
 
     return res;
   }
@@ -335,7 +340,7 @@ pmatrice moindreCarre(pmatrice m)
 
   FILE * gnuplot_data;
 
-  gnuplot_data = fopen( "gnuplot_data_points", "w" );
+  gnuplot_data = fopen("gnuplot_data_points","w");
 
   for(i = 0 ; i < m->hauteur; i++)
   {
@@ -408,7 +413,7 @@ pmatrice vecteurValeurPropre(pmatrice a, float * f, float precision)
 
     double f1 = 0, f2;
 
-    pmatrice b = nouvelleMatrice(a->hauteur, 1);
+    pmatrice t1, t2, b = nouvelleMatrice(a->hauteur, 1);
 
     for(i = 0; i < b->hauteur; i++)
     {
@@ -419,11 +424,16 @@ pmatrice vecteurValeurPropre(pmatrice a, float * f, float precision)
     {
       f2 = f1;
 
+      t1 = b;
       b = multiplication(a, b);
 
       f1 = maximumAbsolue(b);
 
+      t2 = b;
       b = multiplication_scal(b, 1 / f1);
+
+      libereMatrice(t1);
+      libereMatrice(t2);
     } while(fabs(f1 - f2) > precision);
 
     *f = f1;
