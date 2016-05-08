@@ -305,75 +305,83 @@ pmatrice inverse(pmatrice a)
   return NULL;
 }
 
-pmatrice moindreCarre(pmatrice m)
+pmatrice moindreCarre(pmatrice m, char * bourse) // Tram A, arrêt char * bourse
 {
-  double x, y, sx = 0, sy = 0, sxx = 0, sxy = 0, res, y_temporaire;
-
-  int i, n = m->hauteur;
-
-  for(i = 0; i < n; i++)
+  if(m->largeur == 2)
   {
-    sx = sx + getElt(m, i, 0);
-    sy = sy + getElt(m, i, 1);
-    sxy = sxy +  getElt(m, i, 0) * getElt(m, i, 1);
-    sxx = sxx + getElt(m, i, 0) * getElt(m, i, 0);
+    double x, y, sx = 0, sy = 0, sxx = 0, sxy = 0, res, y_temporaire;
+
+    int i, n = m->hauteur;
+
+    for(i = 0; i < n; i++)
+    {
+      sx = sx + getElt(m, i, 0);
+      sy = sy + getElt(m, i, 1);
+      sxy = sxy +  getElt(m, i, 0) * getElt(m, i, 1);
+      sxx = sxx + getElt(m, i, 0) * getElt(m, i, 0);
+    }
+
+    x = (sx * sy - n * sxy) / (sx * sx - n * sxx);
+    y = (sy - x * sx) / n;
+
+    pmatrice residus = nouvelleMatrice(n, 1);
+
+    for(i = 0; i < n; i++)
+    {
+      y_temporaire = x * getElt(m, i, 0) + y;
+
+      res = getElt(m, i, 1) - y_temporaire;
+
+      setElt(residus, 0, i, res);
+    }
+
+    pmatrice coefficient = nouvelleMatrice(2,1);
+
+    setElt(coefficient, 0, 0, x);
+    setElt(coefficient, 0, 1, y);
+
+    FILE * gnuplot_data;
+
+    gnuplot_data = fopen(bourse, "w");
+
+    for(i = 0 ; i < m->hauteur; i++)
+    {
+      fprintf(gnuplot_data, "%f %f\n", getElt(m, i, 0), getElt(m, i, 1));
+    }
+
+    fclose(gnuplot_data);
+
+    // on affiche maintenant un graphique avec gnuplot
+
+    FILE *gp;
+
+    gp = popen(GNUPLOT_PATH, "w");
+
+    if(gp == NULL)
+    {
+        fprintf(stderr, "Erreur 404 : %s.", GNUPLOT_PATH);
+        exit(1);
+    }
+
+    fprintf(gp,"set terminal X11\n");
+    fprintf(gp,"set title 'Droite des moindres carres et points residuels'\n");
+    fprintf(gp,"set xlabel 'x'\n");
+    fprintf(gp,"set ylabel 'y'\n");
+    fprintf(gp, "set xrange [-99:99]\n");
+    fprintf(gp, "set yrange [-99:99]\n");
+    fprintf(gp,"plot '%s' using 1:2, %f*x + %f\n", bourse, x, y);
+    fflush(gp);
+    printf("[ENTER] dans le terminal pour quitter le graphique\n");
+    getchar();
+    pclose(gp);
+
+    return coefficient;
   }
-
-  x = (sx * sy - n * sxy) / (sx * sx - n * sxx);
-  y = (sy - x * sx) / n;
-
-  pmatrice residus = nouvelleMatrice(n, 1);
-
-  for(i = 0; i < n; i++)
+  else
   {
-    y_temporaire = x * getElt(m,i,0) + y;
-
-    res = getElt(m,i,1) - y_temporaire;
-
-    setElt(residus, 0, i, res);
+    printf("          calcul impossible\n");
+    return NULL;
   }
-
-  pmatrice coefficient = nouvelleMatrice(2,1);
-
-  setElt(coefficient, 0, 0, x);
-  setElt(coefficient, 0, 1, y);
-
-  FILE * gnuplot_data;
-
-  gnuplot_data = fopen("gnuplot_data_points","w");
-
-  for(i = 0 ; i < m->hauteur; i++)
-  {
-    fprintf(gnuplot_data, "%f %f\n", getElt(m, i, 0), getElt(m, i, 1));
-  }
-
-  fclose(gnuplot_data);
-
-  // on affiche maintenant un graphique avec gnuplot
-
-  FILE *gp;
-
-  gp = popen(GNUPLOT_PATH, "w");
-
-  if(gp == NULL)
-  {
-      fprintf(stderr, "Erreur 404 : %s.", GNUPLOT_PATH);
-      exit(1);
-  }
-
-  fprintf(gp,"set terminal X11\n");
-  fprintf(gp,"set title 'Droite des moindres carres et points residuels'\n");
-  fprintf(gp,"set xlabel 'x'\n");
-  fprintf(gp,"set ylabel 'y'\n");
-  fprintf(gp, "set xrange [-99:99]\n");
-  fprintf(gp, "set yrange [-99:99]\n");
-  fprintf(gp,"plot 'gnuplot_data_points' using 1:2, %f*x + %f\n", x, y);
-  fflush(gp);
-  printf("[ENTER] dans le terminal pour quitter le graphique");
-  getchar();
-  pclose(gp);
-
-  return coefficient;
 }
 
 /* @brief Renvoie le maximum en valeur absolue d'une matrice

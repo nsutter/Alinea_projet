@@ -17,7 +17,7 @@ int rang(pmatrice a);
 
 pmatrice inverse(pmatrice a);
 
-pmatrice moindreCarre(pmatrice m);
+pmatrice moindreCarre(pmatrice m, char * bourse);
 
 float maximumAbsolue(pmatrice a);
 

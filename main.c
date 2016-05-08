@@ -1,3 +1,4 @@
+// SUTTER Nicolas et POIZAT Théo - L2 CMI ISR
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -7,6 +8,8 @@
 #include <time.h>
 #include "matrice.h"
 #include "resolution.h"
+
+#define PRECISION 0.05
 
 char **separe( char *chaine, const char *separateurs )
 {
@@ -70,6 +73,7 @@ void free_context(contexte * ct)
 	free(ct);
 }
 
+// shift un tableau à partir d'une position
 void shift(char * tab, int pos)
 {
 	int i;
@@ -77,6 +81,7 @@ void shift(char * tab, int pos)
 		tab[i]=tab[i+1];
 }
 
+// recherche si une matrice à deja été définie et renvoie un pointeur vers elle ou NULL
 matrice * recherche_mat(char * nom_rech, contexte * c)
 {
 	int i;
@@ -89,6 +94,7 @@ matrice * recherche_mat(char * nom_rech, contexte * c)
 	return NULL;
 }
 
+// recherche un flottant dans le contexte renvoi 1 si il à été trouvé et modifie res par effet de bords, renvoi 0 sinnon
 int recherche_flo(char * nom_rech, contexte * c, float* res)
 {
 	int i;
@@ -103,6 +109,7 @@ int recherche_flo(char * nom_rech, contexte * c, float* res)
 	return 0;
 }
 
+// cette fonction creer une matrice avec matrix([...])
 pmatrice matrix(char * cmd, contexte * ct)
 {
 	int i, j, lignes=0, colonnes=0;
@@ -115,6 +122,7 @@ pmatrice matrix(char * cmd, contexte * ct)
 	for(i=0; i<lg-1; i++)
 		cmd[i]=cmd[i+2];
 	lg = lg-2;
+	//suppression des charactères inutiles
 	for(i=0; cmd[i] != '\0'; i++)
 	{
 		if(cmd[i] == ']' && bool == 1) {for(j=i; j<lg; j++) cmd[j]= cmd[j+1]; i--; lg --; lignes++;}
@@ -155,6 +163,8 @@ pmatrice matrix(char * cmd, contexte * ct)
 	return mat;
 }
 
+//appel les fonctions qui renvoie un float et renvoi ce float
+// int fct est un int qui indique quelle fonction appeler
 float fonction_f(char * cmd, contexte * ct, int fct, float * res)
 {
 	int i; int lg= strlen(cmd); int parenthese=0; int fin=0;
@@ -191,10 +201,14 @@ float fonction_f(char * cmd, contexte * ct, int fct, float * res)
 	return -1;
 }
 
+//fonction qui eppele les fonctions qui renvoie une matrice et renvoie cette matrice
+// fct est un int qui indique quelle fonction appeler
 pmatrice fonction(char * cmd, contexte * ct, int fct)
 {
+	//suppression du nom de la focntion
 	while(cmd[0] != '(') shift(cmd, 0);
 	int i, virgule=0;
+	//suppression des trucs inutiles
 	for(i=0; cmd[i] != '\0'; i++)
 	{
 		if(cmd[i] == '(' || cmd[i] == ')' || cmd[i] == ' ' || cmd[i] == '\n' || cmd[i]== 13)
@@ -205,7 +219,7 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 		else if(cmd[i] == ',') virgule=1;
 	}
 
-	if((virgule == 0 && fct < 10) || (virgule != 0 && fct >10))
+	if((virgule == 0 && fct < 10 && fct!=13) || (virgule != 0 && fct >10 && fct != 13))
 	{
 		printf("					erreur argument");
 		return NULL;
@@ -225,7 +239,7 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 
 	if(fct < 5)
 	{
-		if(strncmp(tab[1], "matrix", 6) == 0)
+		if(fct != 13 && strncmp(tab[1], "matrix", 6) == 0)
 		{
 			alloue_mat= alloue_mat+2;
 			m2=matrix(tab[1], ct);
@@ -241,6 +255,7 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 			if(recherche_flo(tab[1], ct, &f1) == 1){ printf("					erreur argument\n"); free(tab); return NULL;}
 	}
 	free(tab);
+	// appel de la fonction si les paramètres sont les bons
 	if(m1 != NULL && (fct >5 || m2 != NULL))
 	{
 		if(fct == 1)
@@ -309,7 +324,11 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 		}
 		else if(fct == 13)
 		{
-			matrice * res= moindreCarre(m1);
+			matrice * res;
+			if(virgule == 0)
+				res= moindreCarre(m1,"gnuplot_points");
+			else if(virgule == 1)
+				res= moindreCarre(m1,tab[1]);
 			if(alloue_mat == 1) libereMatrice(m1);
 			else if(alloue_mat == 2) libereMatrice(m2);
 			else if(alloue_mat == 3) {libereMatrice(m1); libereMatrice(m2);}
@@ -324,7 +343,7 @@ pmatrice fonction(char * cmd, contexte * ct, int fct)
 	return NULL;
 }
 
-int main(int argc, char **argv)
+int main()
 {
    struct stat buf;
    FILE *f_in = fdopen(0, "r");
@@ -349,7 +368,6 @@ int main(int argc, char **argv)
 		 {
 		 		printf(">%s\n", line);
 		 }
-		//  printf("dernier char:%d\n", line[strlen(line)-1]);
 		 if(strcmp(line, "quit\n") == 0){free(line); free_context(ct); fclose(f_in); exit(0);}
 		 else if(strcmp(line, "quit") == 0){free(line); free_context(ct); fclose(f_in); exit(0);}
 		 char cmd[strlen(line)];
@@ -554,9 +572,9 @@ int main(int argc, char **argv)
 			 else if(strncmp(tab[0], "transpose(", 10) == 0)
 		  		fct = 11;
 			 else if(strncmp(tab[0], "invert(", 7) == 0)
-				  	fct = 12;
+				  fct = 12;
 		   else if(strncmp(tab[0], "mcarre(", 7) == 0)
-					fct = 12;
+					fct = 13;
 			 else if(strncmp(tab[0], "determinant(", 12) == 0)
 		  		fct= 20;
 			 else if(strncmp(tab[0], "rang(", 5) == 0)
@@ -600,7 +618,7 @@ int main(int argc, char **argv)
 				 char** vp_arg_int= separe(tab[0], "(");
 				 char** vp_arg= separe(vp_arg_int[1], ")");
 				 free(vp_arg_int);
-				 matrice * m1; matrice * m2; float res;
+				 matrice * m1; float res;
 				 int alloue_mat=0;
 			 	 if(strncmp(vp_arg[0], "matrix", 6) == 0)
 				 {
@@ -613,7 +631,7 @@ int main(int argc, char **argv)
 				 	 printf("					erreur argument\n");
 				 else
 				 {
-					 pmatrice m2 = vecteurValeurPropre(m1, &res, 0.05);
+					 pmatrice m2 = vecteurValeurPropre(m1, &res, PRECISION);
 
 					 if(m2 != NULL)
 					 {
