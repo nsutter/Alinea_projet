@@ -2,6 +2,8 @@
 
 Réalisé par SUTTER Nicolas et POIZAT Théo - L2 CMI ISR.
 
+Projet de minicas (traitement dans un terminal de matrices)
+
 Le projet est découpé en trois fichiers .c :
 - main.c : interpréteur
 - matrice.c : création, libération, opérations simples (addition, multiplication, transposée) et speedtest
